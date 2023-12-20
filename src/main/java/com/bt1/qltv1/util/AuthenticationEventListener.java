@@ -19,9 +19,10 @@ public class AuthenticationEventListener {
 
     @EventListener
     public void authenticationSuccess(AuthenticationSuccessEvent event) {
-        ApplicationUser applicationUser  = (ApplicationUser) event.getAuthentication().getPrincipal();
+        ApplicationUser applicationUser  = (ApplicationUser) event.getAuthentication()
+                .getPrincipal();
         User user = userService.findFirstByEmail(applicationUser.getUsername());
-        log.info("login success");
+
         if(user.isBlock()) {
             if (user.isLockTimeExpired()) {
                 log.info("Unlock "+user.getEmail());

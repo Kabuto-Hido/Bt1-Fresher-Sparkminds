@@ -1,9 +1,13 @@
 package com.bt1.qltv1.controller;
 
+import com.bt1.qltv1.config.Global;
+import com.bt1.qltv1.config.SessionStatus;
 import com.bt1.qltv1.dto.auth.LoginRequest;
 import com.bt1.qltv1.dto.auth.LoginResponse;
+import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.service.AuthService;
+import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.JwtUtil;
 import lombok.extern.log4j.Log4j;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Set;
 
 @Log4j
@@ -31,13 +37,14 @@ public class AuthenticationController {
     @Autowired
     private AuthService authService;
     @Autowired
+    private SessionService sessionService;
+    @Autowired
     private UserService userService;
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     public Object authenticate(@RequestBody LoginRequest loginRequest) throws Exception {
-        //userService.save("admin@gmail.com","admin");
         //log login request
         log.info("Login request: "+ loginRequest.toString());
 
@@ -47,7 +54,6 @@ public class AuthenticationController {
                             (loginRequest.getEmail(), loginRequest.getPassword())
             );
         } catch (BadCredentialsException exception) {
-            log.warn("login fail: Email or password is wrong");
             return ResponseEntity.badRequest().body("Email or password is invalid");
         }
         final UserDetails userDetails = authService
@@ -55,21 +61,32 @@ public class AuthenticationController {
 
         //check valid email
         User user = userService.findFirstByEmail(loginRequest.getEmail());
-        //check status account
-        if(!user.isActive()){
-            throw new AuthenticationException("Your account is "+ user.getStatus());
-        }
         //generate token
-        final String accessToken = jwtUtil.generateToken(userDetails.getUsername());
-        final String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+        String idToken = Global.randomNumber();
+
+        final String accessToken = jwtUtil.generateToken(userDetails.getUsername(), idToken);
+        final String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername(), idToken);
+
+        LocalDateTime expiredTime = jwtUtil.extractExpiration(refreshToken);
+
+        Session newSession = new Session();
+        newSession.setExpiredDate(expiredTime);
+        //newSession.setUserId(user);
+        newSession.setJti(idToken);
+        newSession.setStatus(SessionStatus.ACTIVE);
+
+//        //save session to db
+        log.info("New session login: "+newSession);
+        sessionService.saveSession(newSession, user.getId());
 
         LoginResponse loginResponse = LoginResponse
                 .builder().accessToken(accessToken).refreshToken(refreshToken)
                 .username(loginRequest.getEmail()).id(user.getId())
                 .role((Set<GrantedAuthority>) userDetails.getAuthorities()).build();
+
         //log response
         log.info("Login response : "+ loginResponse.toString());
-
+        log.info("login success");
         return ResponseEntity.ok(loginResponse);
     }
 
@@ -80,7 +97,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> saveUser() {
+    public Object saveUser() {
         userService.save("a@gmail.com","123456789");
         return ResponseEntity.ok(
                 "Create account successful! Please check your email to activated your account!");

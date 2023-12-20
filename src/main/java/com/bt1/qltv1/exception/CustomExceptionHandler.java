@@ -26,4 +26,16 @@ public class CustomExceptionHandler {
     public ErrorResponse handleLockAccountException(LockAccountException ex, WebRequest req) {
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(NotFoundException ex, WebRequest req) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(TokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleTokenException(TokenException ex, WebRequest req) {
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
 }

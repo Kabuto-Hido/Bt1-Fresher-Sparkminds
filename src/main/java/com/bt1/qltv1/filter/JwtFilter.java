@@ -1,6 +1,9 @@
 package com.bt1.qltv1.filter;
 
+import com.bt1.qltv1.entity.Session;
+import com.bt1.qltv1.exception.TokenException;
 import com.bt1.qltv1.service.AuthService;
+import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -25,6 +28,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
+    private SessionService sessionService;
+
+    @Autowired
     private AuthService authService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 email = jwtUtil.extractUsername(jwt);
             }catch (JwtException jwtException){
-                throw new AuthenticationException(jwtException.getMessage());
+                throw new TokenException(jwtException.getMessage());
             }
         }
 
@@ -46,10 +52,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = this.authService.loadUserByUsername(email);
 
+            jwtUtil.validateToken(jwt,userDetails);
+
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
         }

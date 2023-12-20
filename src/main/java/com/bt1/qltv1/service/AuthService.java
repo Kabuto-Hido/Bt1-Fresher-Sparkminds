@@ -1,8 +1,10 @@
 package com.bt1.qltv1.service;
 
 import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
+import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.repository.RoleRepository;
+import com.bt1.qltv1.repository.SessionRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.util.ApplicationUser;
 import com.bt1.qltv1.util.JwtUtil;
@@ -28,27 +30,24 @@ import java.util.Optional;
 @Transactional
 public class AuthService implements UserDetailsService {
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
-    private RoleRepository roleRepository;
+    private SessionService sessionService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(email);
-
-        user.orElseThrow(() -> new UsernameNotFoundException("Not found email: " + email));
-
-        return user.map(ApplicationUser::new).get();
-
+        User user = userService.findFirstByEmail(email);
+        return new ApplicationUser(user);
     }
 
     public RefreshTokenResponse refreshToken(HttpServletRequest request) throws AuthenticationException {
         String authorizationHeader = request.getHeader("Authorization");
         //log header
-        log.info("authorizationHeader: "+authorizationHeader);
+        log.info("authorizationHeader: " + authorizationHeader);
         String refreshToken = null;
         String email = null;
 
@@ -58,12 +57,16 @@ public class AuthService implements UserDetailsService {
         refreshToken = authorizationHeader.substring(7);
         try {
             email = jwtUtil.extractUsername(refreshToken);
-        } catch (JwtException ex){
+        } catch (JwtException ex) {
             throw new AuthenticationException(ex.getMessage());
         }
-        UserDetails userDetails = loadUserByUsername(email);
 
-        final String accessToken = jwtUtil.generateToken(userDetails.getUsername());
+        UserDetails userDetails = loadUserByUsername(email);
+        jwtUtil.validateToken(refreshToken,userDetails);
+
+        String jti = jwtUtil.extractJTi(refreshToken);
+        //generate new access token
+        String accessToken = jwtUtil.generateToken(userDetails.getUsername(), jti);
 
         RefreshTokenResponse response = RefreshTokenResponse.builder()
                 .accessToken(accessToken)
@@ -79,14 +82,13 @@ public class AuthService implements UserDetailsService {
         String email;
 
         if (principal instanceof ApplicationUser) {
-            email = ((ApplicationUser)principal).getUsername();
+            email = ((ApplicationUser) principal).getUsername();
         } else {
             email = principal.toString();
         }
 
         return email;
     }
-
 
 
 }

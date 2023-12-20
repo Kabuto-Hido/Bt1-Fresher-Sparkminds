@@ -1,9 +1,10 @@
-package com.bt1.qltv1.service.Impl;
+package com.bt1.qltv1.service.impl;
 
 import com.bt1.qltv1.config.Global;
 import com.bt1.qltv1.config.UserStatus;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
+import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.UserService;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 @Log4j
@@ -29,9 +29,14 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    public List<User> findAllUser() {
+        return userRepository.findAll();
+    }
+
+    @Override
     public User findFirstByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
-                new UsernameNotFoundException("Wrong email!!"));
+                new NotFoundException("Wrong email!!"));
     }
 
     @Override
