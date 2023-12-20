@@ -4,8 +4,8 @@ package com.bt1.qltv1.entity;
 import com.bt1.qltv1.config.Global;
 import com.bt1.qltv1.config.UserStatus;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.beans.factory.annotation.Value;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -59,11 +60,16 @@ public class User extends BaseEntity{
     @Column(name = "lock_time")
     private LocalDateTime lockTime;
 
+    //relationship with role
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles", // table link two relationship
             joinColumns = @JoinColumn(name = "userId"), // Key is link with table Users
             inverseJoinColumns = @JoinColumn(name = "roleId")) //Key is link with table Roles
     private Set<Role> roleSet;
+
+    //relationship with session user
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private List<Session> listSession;
 
     public boolean isActive(){
         return this.status.toString().equalsIgnoreCase("active");
