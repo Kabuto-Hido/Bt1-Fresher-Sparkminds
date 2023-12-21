@@ -1,5 +1,6 @@
 package com.bt1.qltv1.service.impl;
 
+import com.bt1.qltv1.config.SessionStatus;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.exception.NotFoundException;
@@ -8,6 +9,7 @@ import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.SessionService;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Log4j
@@ -35,5 +37,11 @@ public class SessionServiceImpl implements SessionService {
 
         log.info("Find session with jti: "+ session);
         return session;
+    }
+
+    @Override
+    public boolean checkIsBlockSession(String jti) {
+        Session session = sessionRepository.findByJtiAndStatus(jti,SessionStatus.BLOCK);
+        return session != null;
     }
 }

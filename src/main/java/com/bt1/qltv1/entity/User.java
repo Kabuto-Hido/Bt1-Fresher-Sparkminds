@@ -39,7 +39,8 @@ public class User extends BaseEntity{
     private String phone;
 
     @Column(name = "avatar")
-    private String avatar;
+    @Builder.Default
+    private String avatar = Global.DEFAULT_AVATAR;
 
     @Email(message = "Please enter the valid email")
     @Column(name = "email", unique = true)
@@ -51,14 +52,22 @@ public class User extends BaseEntity{
 
     @Column(name="status")
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.BLOCK;
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
     //Wrong number of login attempts
     @Column(name = "failed_attempt")
+    @Builder.Default
     private int failedAttempt = 0;
 
     //account lock period
     @Column(name = "lock_time")
     private LocalDateTime lockTime;
+
+    @Column(name = "mfa_enabled")
+    @Builder.Default
+    private boolean mfaEnabled = false;
+
+    private String secret;
 
     //relationship with role
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

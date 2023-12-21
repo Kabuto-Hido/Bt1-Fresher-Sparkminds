@@ -18,4 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("update User u set u.failedAttempt = ?2 where u.email = ?1")
     void updateFailedAttempts(String email, int failedAttempts);
+
+    @Modifying
+    @Transactional
+    @Query("update User u set u.secret = ?2, u.mfaEnabled = true where u.email = ?1")
+    int enableMfa(String email, String secret);
 }

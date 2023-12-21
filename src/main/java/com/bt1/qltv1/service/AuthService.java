@@ -1,5 +1,6 @@
 package com.bt1.qltv1.service;
 
+import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
 import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
@@ -12,6 +13,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,29 +46,28 @@ public class AuthService implements UserDetailsService {
         return new ApplicationUser(user);
     }
 
-    public RefreshTokenResponse refreshToken(HttpServletRequest request) throws AuthenticationException {
-        String authorizationHeader = request.getHeader("Authorization");
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request){
         //log header
-        log.info("authorizationHeader: " + authorizationHeader);
-        String refreshToken = null;
+        String refreshToken = request.getRefreshToken();
         String email = null;
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new AuthenticationException("Wrong authorization header");
-        }
-        refreshToken = authorizationHeader.substring(7);
         try {
             email = jwtUtil.extractUsername(refreshToken);
         } catch (JwtException ex) {
-            throw new AuthenticationException(ex.getMessage());
+            throw new JwtException(ex.getMessage());
         }
 
-        UserDetails userDetails = loadUserByUsername(email);
-        jwtUtil.validateToken(refreshToken,userDetails);
+        if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(refreshToken))) {
+            throw new JwtException("Your token is expired. Please login again.");
+        }
 
         String jti = jwtUtil.extractJTi(refreshToken);
+        if (sessionService.checkIsBlockSession(jti)) {
+            throw new JwtException("Your refresh token can not use any more.");
+        }
         //generate new access token
-        String accessToken = jwtUtil.generateToken(userDetails.getUsername(), jti);
+        String accessToken = jwtUtil.generateToken(email, jti);
+        log.info("access token: "+accessToken);
 
         RefreshTokenResponse response = RefreshTokenResponse.builder()
                 .accessToken(accessToken)

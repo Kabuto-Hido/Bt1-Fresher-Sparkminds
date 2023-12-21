@@ -2,14 +2,18 @@ package com.bt1.qltv1.service.impl;
 
 import com.bt1.qltv1.config.Global;
 import com.bt1.qltv1.config.UserStatus;
+import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.exception.NotFoundException;
+import com.bt1.qltv1.mapper.UserMapper;
 import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
+import com.bt1.qltv1.service.AuthService;
 import com.bt1.qltv1.service.UserService;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -29,8 +33,15 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public List<User> findAllUser() {
-        return userRepository.findAll();
+    public List<ProfileResponse> findAllUser() {
+        List<User> userList = userRepository.findAll(
+                Sort.by(Sort.Direction.DESC, "createdDate"));
+
+        List<ProfileResponse> profileResponses = new ArrayList<>();
+        for (User user : userList){
+            profileResponses.add(UserMapper.toProfileDto(user));
+        }
+        return profileResponses;
     }
 
     @Override
@@ -59,10 +70,9 @@ public class UserServiceImpl implements UserService {
                 .status(UserStatus.ACTIVE)
                 .password(passwordEncoder.encode(password))
                 .email(email)
-                .avatar(Global.DEFAULT_AVATAR)
                 .roleSet(roleUserSet).build();
 
-        System.out.println("New user: " + newUser);
+        log.info("New user: " + newUser);
 
         userRepository.save(newUser);
     }
@@ -90,7 +100,7 @@ public class UserServiceImpl implements UserService {
         user.setFailedAttempt(0);
 
         userRepository.save(user);
-        log.info("User after unlock: "+ user.toString());
+        log.info("User after unlock: "+ user);
     }
 
     @Override
@@ -107,5 +117,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resetFailedAttempts(String email) {
         userRepository.updateFailedAttempts(email, 0);
+    }
+
+    @Override
+    public int enableMfa(String secret) {
+        String email = AuthService.GetEmailLoggedIn();
+        return userRepository.enableMfa(email, secret);
     }
 }

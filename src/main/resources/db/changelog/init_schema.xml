@@ -21,4 +21,13 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="NewColumnToUserTable" author="liquibase">
+        <addColumn tableName="user">
+            <column name="mfa_enabled" type="boolean" defaultValueBoolean="false" />
+        </addColumn>
+        <addColumn tableName="user">
+            <column name="secret" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

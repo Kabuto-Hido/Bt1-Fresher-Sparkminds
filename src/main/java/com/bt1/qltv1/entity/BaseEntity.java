@@ -1,8 +1,8 @@
 package com.bt1.qltv1.entity;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,6 +11,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder(toBuilder = true)
+
 @MappedSuperclass
 public abstract class BaseEntity {
     @CreationTimestamp

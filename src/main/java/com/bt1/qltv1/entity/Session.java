@@ -1,6 +1,7 @@
 package com.bt1.qltv1.entity;
 
 import com.bt1.qltv1.config.SessionStatus;
+import com.bt1.qltv1.config.UserStatus;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -34,15 +35,15 @@ public class Session {
     @Enumerated(EnumType.STRING)
     private SessionStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User userId;
 
     public boolean isActive(){
-        return this.status.toString().equalsIgnoreCase("active");
+        return this.status.equals(SessionStatus.ACTIVE);
     }
     public boolean isBlock(){
-        return this.status.toString().equalsIgnoreCase("block");
+        return this.status.equals(SessionStatus.BLOCK);
     }
 }

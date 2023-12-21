@@ -7,6 +7,7 @@ import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@Log4j
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
@@ -32,8 +34,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private AuthService authService;
+
+    //set cookie
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
         String jwt = null;
@@ -44,22 +51,37 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 email = jwtUtil.extractUsername(jwt);
             }catch (JwtException jwtException){
-                throw new TokenException(jwtException.getMessage());
+                logger.error(new TokenException(jwtException.getMessage()));
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, jwtException.getMessage());
+                return;
             }
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.authService.loadUserByUsername(email);
+            try {
+                UserDetails userDetails = this.authService.loadUserByUsername(email);
 
-            jwtUtil.validateToken(jwt,userDetails);
+                //check token is belong to user
+                //check token is expired
+                jwtUtil.validateToken(jwt,userDetails);
 
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            usernamePasswordAuthenticationToken
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                //find session from refresh token
+                String jti = jwtUtil.extractJTi(jwt);
+                if (sessionService.checkIsBlockSession(jti)) {
+                    throw new JwtException("Your token can not use any more.");
+                }
 
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken
+                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            }catch (JwtException jwtException){
+                logger.error(new TokenException(jwtException.getMessage()));
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, jwtException.getMessage());
+                return;
+            }
         }
         filterChain.doFilter(request, response);
     }

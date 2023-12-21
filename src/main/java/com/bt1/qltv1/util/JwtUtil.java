@@ -5,8 +5,10 @@ import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.exception.TokenException;
 import com.bt1.qltv1.service.SessionService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@Log4j
 public class JwtUtil {
     @Autowired
     private JwtConfig jwtConfig;
-    @Autowired
-    private SessionService sessionService;
 
     public String extractJTi(String token) {
         return extractClaim(token, Claims::getId);
@@ -37,6 +38,8 @@ public class JwtUtil {
 
     public LocalDateTime extractExpiration(String token) {
         Date timeInDate = extractClaim(token, Claims::getExpiration);
+        log.info("expired date: " + LocalDateTime
+                .ofInstant(timeInDate.toInstant(), ZoneId.systemDefault()));
         return LocalDateTime
                 .ofInstant(timeInDate.toInstant(), ZoneId.systemDefault());
     }
@@ -52,6 +55,7 @@ public class JwtUtil {
 
     public Boolean isTokenExpired(String token) {
         LocalDateTime now = LocalDateTime.now();
+        log.info("now " + now);
         return extractExpiration(token).isBefore(now);
     }
 
@@ -102,20 +106,13 @@ public class JwtUtil {
     public void validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
 
-        if (Boolean.FALSE.equals(isTokenExpired(token))) {
-            throw new TokenException("Your token is expired. Please login again.");
+        //check token is expired
+        if (Boolean.TRUE.equals(isTokenExpired(token))) {
+            throw new JwtException("Your token is expired. Please login again.");
         }
-
-        if (username.equals(userDetails.getUsername())) {
-            throw new TokenException("Token is invalid!");
+        //check token is belong to user
+        if (!username.equals(userDetails.getUsername())) {
+            throw new JwtException("Token is invalid!");
         }
-
-        //find session from refresh token
-        String jti = extractJTi(token);
-        Session session = sessionService.findByJti(jti);
-        if (session.isBlock()) {
-            throw new TokenException("Your refresh token can not use any more.");
-        }
-
     }
 }

@@ -4,15 +4,19 @@ import com.bt1.qltv1.config.Global;
 import com.bt1.qltv1.config.SessionStatus;
 import com.bt1.qltv1.dto.auth.LoginRequest;
 import com.bt1.qltv1.dto.auth.LoginResponse;
+import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
+import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.service.AuthService;
+import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.JwtUtil;
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Set;
@@ -42,9 +47,11 @@ public class AuthenticationController {
     private UserService userService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private MfaService mfaService;
 
     @PostMapping("/login")
-    public Object authenticate(@RequestBody LoginRequest loginRequest) throws Exception {
+    public Object authenticate(@RequestBody LoginRequest loginRequest) {
         //log login request
         log.info("Login request: "+ loginRequest.toString());
 
@@ -71,11 +78,10 @@ public class AuthenticationController {
 
         Session newSession = new Session();
         newSession.setExpiredDate(expiredTime);
-        //newSession.setUserId(user);
         newSession.setJti(idToken);
         newSession.setStatus(SessionStatus.ACTIVE);
 
-//        //save session to db
+        //save session to db
         log.info("New session login: "+newSession);
         sessionService.saveSession(newSession, user.getId());
 
@@ -91,10 +97,26 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public Object refreshToken(HttpServletRequest request) throws AuthenticationException {
+    public Object refreshToken(@RequestBody RefreshTokenRequest request){
         log.info("Exact refresh token!");
         return ResponseEntity.ok(authService.refreshToken(request));
     }
+
+    @GetMapping("/generate-mfa")
+    public Object generateMfa(){
+        String email = AuthService.GetEmailLoggedIn();
+        return ResponseEntity.ok(mfaService.generateSecretKeyAndQrcode(email));
+    }
+
+    @PostMapping("/enable-mfa")
+    public Object enableMfa(@NotNull @RequestParam String secret){
+        if(userService.enableMfa(secret)>0){
+            return ResponseEntity.ok("Enable MFA success!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found or update failed.");
+    }
+
+
 
     @PostMapping("/register")
     public Object saveUser() {
