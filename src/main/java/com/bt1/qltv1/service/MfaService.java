@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MfaService {
     MfaResponse generateSecretKeyAndQrcode(String email);
-    boolean verifyOtp( int code);
+    boolean verifyOtp(String email, String code);
 }

@@ -1,5 +1,6 @@
 package com.bt1.qltv1.controller;
 
+import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.dto.auth.*;
 import com.bt1.qltv1.enumeration.SessionStatus;
@@ -11,6 +12,7 @@ import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +22,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -37,7 +41,7 @@ public class AuthenticationController {
     private final MfaService mfaService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<Object> authenticate(@RequestBody LoginRequest loginRequest) throws Exception {
         //log login request
         try {
             authenticationManager.authenticate(
@@ -45,14 +49,21 @@ public class AuthenticationController {
                             (loginRequest.getEmail(), loginRequest.getPassword())
             );
         } catch (BadCredentialsException exception) {
-            throw  new IllegalArgumentException("Email or password is invalid");
-            //return ResponseEntity.badRequest().body("Email or password is invalid");
+            //throw  new IllegalArgumentException("Email or password is invalid");
+            return ResponseEntity.badRequest().body("Email or password is invalid");
         }
         final UserDetails userDetails = authService
                 .loadUserByUsername(loginRequest.getEmail());
 
         //check valid email
         User user = userService.findFirstByEmail(loginRequest.getEmail());
+
+        //check is account enable MFA
+        if(user.isMfaEnabled() && (!mfaService.verifyOtp(loginRequest.getEmail(),
+                loginRequest.getCode()))){
+                throw new MfaException("Invalid MFA code");
+        }
+
         //generate token
         String idToken = Global.randomNumber();
 
@@ -89,18 +100,21 @@ public class AuthenticationController {
         return ResponseEntity.ok(mfaService.generateSecretKeyAndQrcode(email));
     }
 
-    @PostMapping("/enable-mfa")
-    public ResponseEntity<String> enableMfa(@NotNull @RequestParam String secret){
-        if(userService.enableMfa(secret)>0){
-            return ResponseEntity.ok("Enable MFA success!");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found or update failed.");
+    @PostMapping("/update-mfa")
+    public ResponseEntity<String> enableMfa(@RequestParam String secret,
+                                            @NotNull @RequestParam Boolean isEnable){
+        userService.updateStatusMfa(secret, isEnable);
+        return ResponseEntity.ok("Update MFA success!");
     }
 
-
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request){
+        authService.logout(request);
+        return ResponseEntity.ok("Logout success!!!");
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<String> saveUser() {
+    public ResponseEntity<String> registerNewUser(@Valid @RequestBody RegisterRequest registerRequest) {
         userService.save("b@gmail.com","123456789");
         return ResponseEntity.ok(
                 "Create account successful! Please check your email to activated your account!");

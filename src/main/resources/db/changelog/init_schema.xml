@@ -30,4 +30,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="NewColumnToUserTable" author="liquibase">
+        <addColumn tableName="user">
+            <column name="verify_mail" type="boolean" defaultValueBoolean="false" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

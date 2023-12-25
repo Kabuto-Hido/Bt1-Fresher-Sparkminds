@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 
+
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
@@ -70,6 +71,10 @@ public class User extends BaseEntity{
 
     @Column(name = "secret")
     private String secret;
+
+    @Column(name = "verify_mail")
+    @Builder.Default
+    private boolean verifyMail = false;
 
     //relationship with role
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)

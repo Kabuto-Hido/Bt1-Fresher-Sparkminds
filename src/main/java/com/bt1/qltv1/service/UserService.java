@@ -16,6 +16,7 @@ public interface UserService {
     void unlockAccount(User user);
     String getTimeRemaining(User user);
     void resetFailedAttempts(String email);
-    int enableMfa(String secret);
+    void updateStatusMfa(String secret, Boolean isEnable);
     void updateAvatar();
+
 }

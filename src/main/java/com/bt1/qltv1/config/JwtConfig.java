@@ -1,14 +1,13 @@
 package com.bt1.qltv1.config;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
-@Component
+
+@ConfigurationPropertiesScan
 @ConfigurationProperties(prefix = "application.jwt")
-@Getter
-@Setter
+@Data
 public class JwtConfig {
     private String secretKey;
     private String tokenPrefix;

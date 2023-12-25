@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -66,7 +67,7 @@ public class SecurityConfig {
                         "/webjars/**")
                 .permitAll()
                 .antMatchers("/api/v1/generate-mfa",
-                        "/api/v1/enable-mfa").hasAnyRole(ADMIN.name(), USER.name())
+                        "/api/v1/update-mfa", "/api/v1/logout").hasAnyRole(ADMIN.name(), USER.name())
                 .antMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
                 .antMatchers("/api/v1/user/**").hasRole(USER.name())
                 .anyRequest().authenticated().and()

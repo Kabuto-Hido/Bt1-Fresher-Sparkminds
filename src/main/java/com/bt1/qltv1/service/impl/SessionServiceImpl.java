@@ -31,7 +31,6 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public Session findByJti(String jti) {
-
         Session session = sessionRepository.findByJti(jti)
                 .orElseThrow(() -> new NotFoundException("Not found user session with jti "+jti));
 
@@ -43,5 +42,18 @@ public class SessionServiceImpl implements SessionService {
     public boolean checkIsBlockSession(String jti) {
         Optional<Session> session = sessionRepository.findByJtiAndStatus(jti,SessionStatus.BLOCK);
         return session.isPresent();
+    }
+
+    @Override
+    public void blockSession(String jti) {
+        try {
+            Session blockSession = findByJti(jti);
+            blockSession.setStatus(SessionStatus.BLOCK);
+
+            sessionRepository.save(blockSession);
+        }catch (Exception ex){
+            log.error(ex.getMessage());
+        }
+
     }
 }

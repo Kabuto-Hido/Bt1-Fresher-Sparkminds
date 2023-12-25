@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service;
 public interface SessionService {
     void saveSession(Session session, long userId);
     Session findByJti(String jti);
-
     boolean checkIsBlockSession(String jti);
+    void blockSession(String jti);
 }

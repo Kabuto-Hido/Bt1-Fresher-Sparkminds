@@ -1,14 +1,12 @@
 package com.bt1.qltv1.filter;
 
-import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.exception.TokenException;
 import com.bt1.qltv1.service.AuthService;
 import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.util.JwtUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +14,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,16 +21,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 @Log4j
 public class JwtFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService;
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     //set cookie
     @Override
@@ -62,7 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 UserDetails userDetails = this.authService.loadUserByUsername(email);
 
-                //check token is belong to user
+                //check token is belongto user
                 //check token is expired
                 jwtUtil.validateToken(jwt,userDetails);
 

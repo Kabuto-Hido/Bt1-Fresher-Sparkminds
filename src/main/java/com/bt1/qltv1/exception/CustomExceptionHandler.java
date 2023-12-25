@@ -38,4 +38,11 @@ public class CustomExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage()));
     }
 
+
+    @ExceptionHandler(MfaException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<ErrorResponse> handleMfaException(MfaException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(HttpStatus.FORBIDDEN, ex.getMessage()));
+    }
 }

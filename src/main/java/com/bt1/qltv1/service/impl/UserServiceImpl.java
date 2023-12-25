@@ -63,7 +63,6 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Password must be longer than 7 character and can't be null");
         }
 
-        //Nếu không trùng username, encode pwd và lưu vào db user
         Optional<Role> roleUserOptional = roleRepository.findById(2L); //Lấy ROLE_USER
         log.info(roleUserOptional);
         List<Role> roleUserList = new ArrayList<>();
@@ -90,7 +89,6 @@ public class UserServiceImpl implements UserService {
         userRepository.updateFailedAttempts(email, (failedAttempt + 1));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void lockAccount(User user) {
 //        User findUser = findFirstByEmail(user.getEmail());
@@ -131,10 +129,24 @@ public class UserServiceImpl implements UserService {
         userRepository.updateFailedAttempts(email, 0);
     }
 
+    @Transactional
     @Override
-    public int enableMfa(String secret) {
-        String email = AuthService.GetEmailLoggedIn();
-        return userRepository.enableMfa(email, secret);
+    public void updateStatusMfa(String secret, Boolean isEnable) {
+        try {
+            String email = AuthService.GetEmailLoggedIn();
+            User user = findFirstByEmail(email);
+
+            user.setMfaEnabled(isEnable);
+            user.setSecret(secret);
+
+            userRepository.save(user);
+        }catch (Exception ex){
+            log.error(ex.getMessage());
+        }
+        finally {
+            log.info("Done update status MFA");
+        }
+
     }
 
     @Override
@@ -153,4 +165,5 @@ public class UserServiceImpl implements UserService {
     }
         log.info("updateAvatar method finished ");
     }
+
 }
