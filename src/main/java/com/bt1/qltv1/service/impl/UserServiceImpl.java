@@ -1,7 +1,9 @@
 package com.bt1.qltv1.service.impl;
 
-import com.bt1.qltv1.config.Global;
-import com.bt1.qltv1.config.UserStatus;
+import com.bt1.qltv1.exception.LockAccountException;
+import com.bt1.qltv1.util.ApplicationUser;
+import com.bt1.qltv1.util.Global;
+import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
@@ -11,12 +13,15 @@ import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.AuthService;
 import com.bt1.qltv1.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,13 +29,11 @@ import java.util.*;
 
 @Log4j
 @Component
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<ProfileResponse> findAllUser() {
@@ -61,12 +64,13 @@ public class UserServiceImpl implements UserService {
         }
 
         //Nếu không trùng username, encode pwd và lưu vào db user
-        Optional<Role> roleUserOptional = roleRepository.findById(Long.parseLong("2")); //Lấy ROLE_USER
+        Optional<Role> roleUserOptional = roleRepository.findById(2L); //Lấy ROLE_USER
+        log.info(roleUserOptional);
         List<Role> roleUserList = new ArrayList<>();
         roleUserOptional.ifPresent(roleUserList::add);
         Set<Role> roleUserSet = new HashSet<>(roleUserList);//ép kiểu role thành set gán cho entity user
 
-        User newUser = User.builder().fullName("Kabuto")
+        User newUser = User.builder().fullName("Darkness")
                 .status(UserStatus.ACTIVE)
                 .password(passwordEncoder.encode(password))
                 .email(email)
@@ -80,19 +84,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public void increaseFailedAttempts(String email, int failedAttempt) {
         log.info("login fail attempts "+ (failedAttempt+1));
+//        User user = findFirstByEmail(email);
+//        user.setFailedAttempt((failedAttempt + 1));
+//        userRepository.save(user);
         userRepository.updateFailedAttempts(email, (failedAttempt + 1));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void lockAccount(User user) {
-        user.setStatus(UserStatus.BLOCK);
+//        User findUser = findFirstByEmail(user.getEmail());
         LocalDateTime now = LocalDateTime.now();
-        user.setLockTime(now.plusMinutes(Global.LOCK_TIME_DURATION / 60000));
+        LocalDateTime lockTime = now.plusMinutes((Global.LOCK_TIME_DURATION / 60000));
+        user.setLockTime(lockTime);
+        user.setStatus(UserStatus.BLOCK);
+        log.info("lock time "+ lockTime);
         userRepository.save(user);
 
         log.info("lock account:" +user.getEmail() + " in time "+user.getLockTime());
     }
 
+    //@Transactional(readOnly = true)
     @Override
     public void unlockAccount(User user) {
         user.setStatus(UserStatus.ACTIVE);
@@ -123,5 +135,22 @@ public class UserServiceImpl implements UserService {
     public int enableMfa(String secret) {
         String email = AuthService.GetEmailLoggedIn();
         return userRepository.enableMfa(email, secret);
+    }
+
+    @Override
+    public void updateAvatar() {
+        try {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = ((ApplicationUser)principal).getUsername();
+
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new NotFoundException("Wrong email!!"));
+        user.setAvatar(Global.DEFAULT_AVATAR);
+        userRepository.save(user);
+
+    } catch (Exception e) {
+        log.error("An error occurred in updateAvatar method", e);
+    }
+        log.info("updateAvatar method finished ");
     }
 }

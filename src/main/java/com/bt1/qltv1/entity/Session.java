@@ -1,7 +1,6 @@
 package com.bt1.qltv1.entity;
 
-import com.bt1.qltv1.config.SessionStatus;
-import com.bt1.qltv1.config.UserStatus;
+import com.bt1.qltv1.enumeration.SessionStatus;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,10 +11,11 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+//@Data
+//@EqualsAndHashCode(callSuper = false)
 @Getter
 @Setter
-@Builder
-@ToString
 
 @Entity
 @Table(name = "session")
@@ -26,12 +26,13 @@ public class Session {
     private Long id;
 
     @NotNull
+    @Column(name = "jti", unique = true)
     private String jti;
 
     @Column(name = "expired_date")
     private LocalDateTime expiredDate;
 
-    @Column
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private SessionStatus status;
 

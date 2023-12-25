@@ -1,4 +1,4 @@
-package com.bt1.qltv1.config;
+package com.bt1.qltv1.util;
 
 import java.util.UUID;
 

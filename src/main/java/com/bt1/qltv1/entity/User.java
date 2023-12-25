@@ -1,11 +1,9 @@
 package com.bt1.qltv1.entity;
 
 
-import com.bt1.qltv1.config.Global;
-import com.bt1.qltv1.config.UserStatus;
+import com.bt1.qltv1.util.Global;
+import com.bt1.qltv1.enumeration.UserStatus;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -16,12 +14,14 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 
+
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
+//@Data
+//@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
-@Builder
-@ToString
 
 @Entity
 @Table(name = "user")
@@ -31,7 +31,7 @@ public class User extends BaseEntity{
     private Long id;
 
     @NotBlank(message = "Name should not be null")
-    @Column(name = "fullname")
+    @Column(name = "fullname", length = 100)
     private String fullName;
 
     @Pattern(regexp = "^\\d{10}$")
@@ -54,6 +54,7 @@ public class User extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
+
     //Wrong number of login attempts
     @Column(name = "failed_attempt")
     @Builder.Default
@@ -67,6 +68,7 @@ public class User extends BaseEntity{
     @Builder.Default
     private boolean mfaEnabled = false;
 
+    @Column(name = "secret")
     private String secret;
 
     //relationship with role
@@ -81,10 +83,10 @@ public class User extends BaseEntity{
     private List<Session> listSession;
 
     public boolean isActive(){
-        return this.status.toString().equalsIgnoreCase("active");
+        return this.status.equals(UserStatus.ACTIVE);
     }
     public boolean isBlock(){
-        return this.status.toString().equalsIgnoreCase("block");
+        return this.status.equals(UserStatus.BLOCK);
     }
 
     public boolean isLockTimeExpired(){

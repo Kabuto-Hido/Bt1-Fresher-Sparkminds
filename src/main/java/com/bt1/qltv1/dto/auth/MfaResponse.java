@@ -2,12 +2,11 @@ package com.bt1.qltv1.dto.auth;
 
 import lombok.*;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
+@Data
+
 public class MfaResponse {
     private String secretKey;
     private String qrCodeUrl;

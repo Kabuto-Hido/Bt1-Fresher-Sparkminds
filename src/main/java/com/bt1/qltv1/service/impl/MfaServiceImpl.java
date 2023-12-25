@@ -8,19 +8,15 @@ import com.bt1.qltv1.service.UserService;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class MfaServiceImpl implements MfaService {
-    @Autowired
-    private UserService userService;
-
-    private GoogleAuthenticator googleAuthenticator;
-
-    public MfaServiceImpl() {
-        this.googleAuthenticator = new GoogleAuthenticator();
-    }
+    private final UserService userService;
+    private GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
 
     @Override
     public MfaResponse generateSecretKeyAndQrcode(String email) {

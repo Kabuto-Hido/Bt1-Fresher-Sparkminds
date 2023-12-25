@@ -4,10 +4,9 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Builder
+
 public class RefreshTokenRequest {
     private String refreshToken;
 }

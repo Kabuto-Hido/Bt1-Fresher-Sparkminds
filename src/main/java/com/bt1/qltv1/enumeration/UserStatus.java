@@ -1,4 +1,4 @@
-package com.bt1.qltv1.config;
+package com.bt1.qltv1.enumeration;
 
 public enum UserStatus {
     ACTIVE,BLOCK,DELETED

@@ -5,12 +5,12 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
 
-@Getter
-@Setter
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
+@Data
+
 public class LoginResponse {
     private String accessToken;
     private String refreshToken;

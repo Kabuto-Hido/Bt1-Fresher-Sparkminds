@@ -17,4 +17,5 @@ public interface UserService {
     String getTimeRemaining(User user);
     void resetFailedAttempts(String email);
     int enableMfa(String secret);
+    void updateAvatar();
 }

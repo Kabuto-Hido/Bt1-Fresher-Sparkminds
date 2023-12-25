@@ -8,10 +8,11 @@ import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+//@Data
+//@EqualsAndHashCode(callSuper = false)
 @Getter
 @Setter
-@Builder
-@ToString
 
 @Entity
 @Table(name = "role")
@@ -19,6 +20,7 @@ public class Role extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "name")
     private String name;
 
     @ManyToMany(mappedBy = "roleSet")

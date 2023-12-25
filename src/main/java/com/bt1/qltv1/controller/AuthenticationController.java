@@ -1,11 +1,8 @@
 package com.bt1.qltv1.controller;
 
-import com.bt1.qltv1.config.Global;
-import com.bt1.qltv1.config.SessionStatus;
-import com.bt1.qltv1.dto.auth.LoginRequest;
-import com.bt1.qltv1.dto.auth.LoginResponse;
-import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
-import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
+import com.bt1.qltv1.util.Global;
+import com.bt1.qltv1.dto.auth.*;
+import com.bt1.qltv1.enumeration.SessionStatus;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.service.AuthService;
@@ -13,9 +10,7 @@ import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.JwtUtil;
-import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,43 +20,33 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.sasl.AuthenticationException;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Set;
 
-@Log4j
+@RequiredArgsConstructor
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1")
 public class AuthenticationController {
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private AuthService authService;
-    @Autowired
-    private SessionService sessionService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private MfaService mfaService;
+    private final JwtUtil jwtUtil;
+    private final AuthService authService;
+    private final SessionService sessionService;
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final MfaService mfaService;
 
     @PostMapping("/login")
-    public Object authenticate(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginRequest loginRequest) throws Exception {
         //log login request
-        log.info("Login request: "+ loginRequest.toString());
-
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken
                             (loginRequest.getEmail(), loginRequest.getPassword())
             );
         } catch (BadCredentialsException exception) {
-            return ResponseEntity.badRequest().body("Email or password is invalid");
+            throw  new IllegalArgumentException("Email or password is invalid");
+            //return ResponseEntity.badRequest().body("Email or password is invalid");
         }
         final UserDetails userDetails = authService
                 .loadUserByUsername(loginRequest.getEmail());
@@ -82,7 +67,6 @@ public class AuthenticationController {
         newSession.setStatus(SessionStatus.ACTIVE);
 
         //save session to db
-        log.info("New session login: "+newSession);
         sessionService.saveSession(newSession, user.getId());
 
         LoginResponse loginResponse = LoginResponse
@@ -91,25 +75,22 @@ public class AuthenticationController {
                 .role((Set<GrantedAuthority>) userDetails.getAuthorities()).build();
 
         //log response
-        log.info("Login response : "+ loginResponse.toString());
-        log.info("login success");
         return ResponseEntity.ok(loginResponse);
     }
 
     @PostMapping("/refresh-token")
-    public Object refreshToken(@RequestBody RefreshTokenRequest request){
-        log.info("Exact refresh token!");
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request){
         return ResponseEntity.ok(authService.refreshToken(request));
     }
 
     @GetMapping("/generate-mfa")
-    public Object generateMfa(){
+    public ResponseEntity<MfaResponse> generateMfa(){
         String email = AuthService.GetEmailLoggedIn();
         return ResponseEntity.ok(mfaService.generateSecretKeyAndQrcode(email));
     }
 
     @PostMapping("/enable-mfa")
-    public Object enableMfa(@NotNull @RequestParam String secret){
+    public ResponseEntity<String> enableMfa(@NotNull @RequestParam String secret){
         if(userService.enableMfa(secret)>0){
             return ResponseEntity.ok("Enable MFA success!");
         }
@@ -119,8 +100,8 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public Object saveUser() {
-        userService.save("a@gmail.com","123456789");
+    public ResponseEntity<String> saveUser() {
+        userService.save("b@gmail.com","123456789");
         return ResponseEntity.ok(
                 "Create account successful! Please check your email to activated your account!");
 

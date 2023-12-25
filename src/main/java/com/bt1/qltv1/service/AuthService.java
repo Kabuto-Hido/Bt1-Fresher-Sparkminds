@@ -11,6 +11,7 @@ import com.bt1.qltv1.util.ApplicationUser;
 import com.bt1.qltv1.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -30,15 +31,12 @@ import java.util.Optional;
 @Log4j
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private SessionService sessionService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final UserService userService;
+    private final SessionService sessionService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

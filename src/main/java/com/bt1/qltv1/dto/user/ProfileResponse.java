@@ -7,11 +7,10 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-//@Builder
 @SuperBuilder(toBuilder = true)
 
 public class ProfileResponse extends BaseEntity {

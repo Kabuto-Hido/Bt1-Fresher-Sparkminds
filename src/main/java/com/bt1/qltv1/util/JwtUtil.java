@@ -25,8 +25,11 @@ import java.util.function.Function;
 @Service
 @Log4j
 public class JwtUtil {
-    @Autowired
-    private JwtConfig jwtConfig;
+    private final JwtConfig jwtConfig;
+
+    public JwtUtil(JwtConfig jwtConfig) {
+        this.jwtConfig = jwtConfig;
+    }
 
     public String extractJTi(String token) {
         return extractClaim(token, Claims::getId);

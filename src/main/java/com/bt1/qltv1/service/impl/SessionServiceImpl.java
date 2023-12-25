@@ -1,24 +1,24 @@
 package com.bt1.qltv1.service.impl;
 
-import com.bt1.qltv1.config.SessionStatus;
+import com.bt1.qltv1.enumeration.SessionStatus;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.repository.SessionRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.SessionService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Log4j
 @Component
+@RequiredArgsConstructor
 public class SessionServiceImpl implements SessionService {
-    @Autowired
-    private SessionRepository sessionRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final SessionRepository sessionRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void saveSession(Session session, long userId) {
@@ -41,7 +41,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public boolean checkIsBlockSession(String jti) {
-        Session session = sessionRepository.findByJtiAndStatus(jti,SessionStatus.BLOCK);
-        return session != null;
+        Optional<Session> session = sessionRepository.findByJtiAndStatus(jti,SessionStatus.BLOCK);
+        return session.isPresent();
     }
 }

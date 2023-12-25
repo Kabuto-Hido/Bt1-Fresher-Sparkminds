@@ -24,9 +24,7 @@ public class ApplicationUser implements UserDetails {
         List<Role> roleList = new ArrayList<>(roleSet);
         Set<GrantedAuthority> role = new HashSet<>();
 
-        roleList.forEach(item -> {
-            role.add(new SimpleGrantedAuthority(item.getName()));
-        });
+        roleList.forEach(item -> role.add(new SimpleGrantedAuthority(item.getName())));
 
         this.authorities = role;
     }
