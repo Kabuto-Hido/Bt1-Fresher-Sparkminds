@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -25,6 +26,7 @@ public class Role extends BaseEntity{
 
     @ManyToMany(mappedBy = "roleSet")
     @JsonBackReference
-    private Set<User> userSet;
+    @Builder.Default
+    private Set<User> userSet = new HashSet<>();
 
 }

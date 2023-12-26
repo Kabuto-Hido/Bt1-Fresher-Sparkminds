@@ -82,10 +82,10 @@ public class JwtUtil {
         return createToken(claims, email, jti, expDate);
     }
 
-//    public String generateEmailToken(String username) {
-//        Map<String, Object> claims = new HashMap<>();
-//        return createEmailToken(claims, username);
-//    }
+    public String generateEmailToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        return createEmailToken(claims, email);
+    }
 
     private String createToken(Map<String, Object> claims, String subject, String jti, Date expDate) {
 
@@ -96,14 +96,14 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecretKey()).compact();
     }
 
-//    private String createEmailToken(Map<String, Object> claims, String subject) {
-//        Calendar c = Calendar.getInstance();
-//        c.add(Calendar.MINUTE, jwtConfig.getTokenExpirationAfterMinutes());
-//        Date expDate = c.getTime();
-//        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setExpiration(expDate)
-//                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecretKey()).compact();
-//    }
+    private String createEmailToken(Map<String, Object> claims, String subject) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, jwtConfig.getTokenExpirationAfterMinutes());
+        Date expDate = c.getTime();
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expDate)
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecretKey()).compact();
+    }
 
     //check token belong to user
     public void validateToken(String token, UserDetails userDetails) {

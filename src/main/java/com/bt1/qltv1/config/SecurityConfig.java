@@ -1,12 +1,10 @@
 package com.bt1.qltv1.config;
 
 import com.bt1.qltv1.filter.JwtFilter;
-import com.bt1.qltv1.service.AuthService;
+import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -34,9 +32,9 @@ import static com.bt1.qltv1.enumeration.UserRole.USER;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final AuthService authService;
+    private final UserDetailsServiceImpl userDetailsService;
     private final JwtFilter jwtFilter;
-    private final PasswordEncoder passwordEncoder;
+    //private final PasswordEncoder passwordEncoder;
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -46,8 +44,8 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(authService);
-        authProvider.setPasswordEncoder(passwordEncoder);
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
@@ -56,8 +54,9 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults())
                 .csrf()
                 .disable().authorizeRequests()
-                .antMatchers("/api/v1/", "/api/v1/register", "/api/v1/login",
-                        "/api/v1/refresh-token",
+                .antMatchers("/api/v1/", "/api/v1/common/register", "/api/v1/common/login",
+                        "/api/v1/common/refresh-token","/api/v1/common/confirm-email/**",
+                        "/api/v1/common/sendEmail/activate",
                         "/v2/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",
@@ -67,7 +66,8 @@ public class SecurityConfig {
                         "/webjars/**")
                 .permitAll()
                 .antMatchers("/api/v1/generate-mfa",
-                        "/api/v1/update-mfa", "/api/v1/logout").hasAnyRole(ADMIN.name(), USER.name())
+                        "/api/v1/disable-mfa","/api/v1/enable-mfa",
+                        "/api/v1/logout").hasAnyRole(ADMIN.name(), USER.name())
                 .antMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
                 .antMatchers("/api/v1/user/**").hasRole(USER.name())
                 .anyRequest().authenticated().and()
@@ -81,10 +81,10 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder(10);
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder(10);
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

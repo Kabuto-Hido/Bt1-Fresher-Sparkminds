@@ -1,39 +1,45 @@
 package com.bt1.qltv1.service.impl;
 
-import com.bt1.qltv1.exception.LockAccountException;
-import com.bt1.qltv1.util.ApplicationUser;
-import com.bt1.qltv1.util.Global;
-import com.bt1.qltv1.enumeration.UserStatus;
+import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.dto.user.ProfileResponse;
-import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
+import com.bt1.qltv1.enumeration.ActivateMailType;
+import com.bt1.qltv1.enumeration.UserStatus;
+import com.bt1.qltv1.exception.BadRequest;
+import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.mapper.UserMapper;
-import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
-import com.bt1.qltv1.service.AuthService;
+import com.bt1.qltv1.service.EmailService;
+import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.UserService;
+import com.bt1.qltv1.util.ApplicationUser;
+import com.bt1.qltv1.util.Global;
+import com.bt1.qltv1.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Log4j
 @Component
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final JwtUtil jwtUtil;
+    private final SpringTemplateEngine templateEngine;
+    private final MfaService mfaService;
 
     @Override
     public List<ProfileResponse> findAllUser() {
@@ -51,33 +57,6 @@ public class UserServiceImpl implements UserService {
     public User findFirstByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                 new NotFoundException("Wrong email!!"));
-    }
-
-    @Override
-    public void save(String email, String password) {
-        Optional<User> userByEmail = userRepository.findByEmail(email);
-        if (userByEmail.isPresent()) {
-            throw new IllegalArgumentException("Email duplicate, Please retype!");
-        }
-        if (password == null || password.length() <= 6) {
-            throw new IllegalArgumentException("Password must be longer than 7 character and can't be null");
-        }
-
-        Optional<Role> roleUserOptional = roleRepository.findById(2L); //Lấy ROLE_USER
-        log.info(roleUserOptional);
-        List<Role> roleUserList = new ArrayList<>();
-        roleUserOptional.ifPresent(roleUserList::add);
-        Set<Role> roleUserSet = new HashSet<>(roleUserList);//ép kiểu role thành set gán cho entity user
-
-        User newUser = User.builder().fullName("Darkness")
-                .status(UserStatus.ACTIVE)
-                .password(passwordEncoder.encode(password))
-                .email(email)
-                .roleSet(roleUserSet).build();
-
-        log.info("New user: " + newUser);
-
-        userRepository.save(newUser);
     }
 
     @Override
@@ -118,7 +97,7 @@ public class UserServiceImpl implements UserService {
         LocalDateTime d1 = user.getLockTime();
         LocalDateTime d2 = LocalDateTime.now();
 
-        Duration duration = Duration.between(d1, d2);
+        Duration duration = Duration.between(d2, d1);
         long minuteRemaining = duration.getSeconds() / 60;
         long secondRemaining = duration.getSeconds() % 60;
         return String.format("%sm %ss", minuteRemaining, secondRemaining);
@@ -129,22 +108,45 @@ public class UserServiceImpl implements UserService {
         userRepository.updateFailedAttempts(email, 0);
     }
 
-    @Transactional
     @Override
-    public void updateStatusMfa(String secret, Boolean isEnable) {
+    public void enableMfa(VerifyMfaRequest request) {
         try {
-            String email = AuthService.GetEmailLoggedIn();
+            String email = UserDetailsServiceImpl.GetEmailLoggedIn();
+
+            if(!mfaService.verifyOtp(request.getSecret(),request.getCode())){
+                throw new MfaException("Invalid MFA code");
+            }
+
             User user = findFirstByEmail(email);
 
-            user.setMfaEnabled(isEnable);
-            user.setSecret(secret);
+            user.setMfaEnabled(true);
+            user.setSecret(request.getSecret());
 
             userRepository.save(user);
         }catch (Exception ex){
             log.error(ex.getMessage());
         }
         finally {
-            log.info("Done update status MFA");
+            log.info("Enable MFA success");
+        }
+    }
+
+    @Transactional
+    @Override
+    public void disableMfa() {
+        try {
+            String email = UserDetailsServiceImpl.GetEmailLoggedIn();
+            User user = findFirstByEmail(email);
+
+            user.setMfaEnabled(false);
+            user.setSecret(null);
+
+            userRepository.save(user);
+        }catch (Exception ex){
+            log.error(ex.getMessage());
+        }
+        finally {
+            log.info("Disable MFA success");
         }
 
     }
@@ -164,6 +166,44 @@ public class UserServiceImpl implements UserService {
         log.error("An error occurred in updateAvatar method", e);
     }
         log.info("updateAvatar method finished ");
+    }
+
+    @Override
+    public void sendEmailToActivatedAccount(String addressGmail, ActivateMailType type) {
+        final String token = jwtUtil.generateEmailToken(addressGmail);
+        String link = null;
+        String otp = null;
+
+        Context context = new Context();
+        context.setVariable("email",addressGmail);
+        if(type.equals(ActivateMailType.OTP)){
+            otp = Global.getOTP();
+        }
+        if (type.equals(ActivateMailType.LINK)) {
+            link = "http://localhost:8082/api/v1/common/confirm-email?token=" + token;
+
+        }
+        context.setVariable("otp",otp);
+        context.setVariable("url", link);
+        String body = templateEngine.process("email-verify-template.html", context);
+
+        emailService.sendAsHtml(addressGmail,
+                body, "Verify your gmail for register");
+    }
+
+    @Override
+    public String confirmToken(String token) {
+        if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(token))) {
+            throw new BadRequest("Email expired");
+        }
+        String email = jwtUtil.extractUsername(token);
+        Optional<User> userConfirm = userRepository.findFirstByEmailAndVerifyMail(email,
+                true);
+        if (userConfirm.isPresent()) {
+            throw new BadRequest("Email already verify mail");
+        }
+        userRepository.activateAccount(email);
+        return "Account has been activated";
     }
 
 }

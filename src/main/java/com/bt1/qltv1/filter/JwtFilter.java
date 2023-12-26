@@ -1,7 +1,7 @@
 package com.bt1.qltv1.filter;
 
 import com.bt1.qltv1.exception.TokenException;
-import com.bt1.qltv1.service.AuthService;
+import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import com.bt1.qltv1.service.SessionService;
 import com.bt1.qltv1.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
@@ -28,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final SessionService sessionService;
 
-    private final AuthService authService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     //set cookie
     @Override
@@ -55,7 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             try {
-                UserDetails userDetails = this.authService.loadUserByUsername(email);
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
                 //check token is belongto user
                 //check token is expired

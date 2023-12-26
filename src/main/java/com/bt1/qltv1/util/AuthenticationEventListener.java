@@ -1,7 +1,7 @@
 package com.bt1.qltv1.util;
 
 import com.bt1.qltv1.entity.User;
-import com.bt1.qltv1.exception.LockAccountException;
+import com.bt1.qltv1.exception.AuthException;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.service.UserService;
 import lombok.extern.log4j.Log4j;
@@ -9,8 +9,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Log4j
 @Component
@@ -27,6 +25,13 @@ public class AuthenticationEventListener {
                 .getPrincipal();
         User user = userService.findFirstByEmail(applicationUser.getUsername());
         log.info("login success");
+
+        log.info(user.isVerifyMail());
+
+        if (!user.isVerifyMail()){
+            throw new AuthException("You must verify your email first to login!!");
+        }
+
         //if fail attempts larger than 0
         if (user.getFailedAttempt() > 0) {
             userService.resetFailedAttempts(user.getEmail());
@@ -37,7 +42,7 @@ public class AuthenticationEventListener {
         if (!user.isLockTimeExpired()) {
             log.warn("Account "+ user.getEmail()+" will unlock after "+
                     userService.getTimeRemaining(user));
-            throw new LockAccountException("Your account will unlock after "+
+            throw new AuthException("Your account will unlock after "+
                     userService.getTimeRemaining(user));
         }
 
@@ -64,7 +69,7 @@ public class AuthenticationEventListener {
         if (user.isActive()){
             if(loginFailedAttempts >= Global.MAX_FAILED_ATTEMPTS){
                 userService.lockAccount(user);
-                throw new LockAccountException("Your account has been locked due to 3 " +
+                throw new AuthException("Your account has been locked due to 3 " +
                         "failed attempts. It will be unlocked after 30 minutes.");
             }
             userService.increaseFailedAttempts(user.getEmail(),loginFailedAttempts);
@@ -74,13 +79,13 @@ public class AuthenticationEventListener {
             if (user.isLockTimeExpired()){
                 userService.unlockAccount(user);
                 log.info("Unlock "+user.getEmail());
-                throw new LockAccountException("Your account has been unlocked." +
+                throw new AuthException("Your account has been unlocked." +
                         " Please try to login again.");
             }
 
             log.warn("Account "+ user.getEmail()+" will unlock after "+
                     userService.getTimeRemaining(user));
-            throw new LockAccountException("Your account will unlock after "+
+            throw new AuthException("Your account will unlock after "+
                     userService.getTimeRemaining(user));
         }
     }

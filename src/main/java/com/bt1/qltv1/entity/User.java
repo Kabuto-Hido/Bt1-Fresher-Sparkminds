@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -81,11 +83,13 @@ public class User extends BaseEntity{
     @JoinTable(name = "users_roles", // table link two relationship
             joinColumns = @JoinColumn(name = "userId"), // Key is link with table Users
             inverseJoinColumns = @JoinColumn(name = "roleId")) //Key is link with table Roles
-    private Set<Role> roleSet;
+    @Builder.Default
+    private Set<Role> roleSet = new HashSet<>();
 
     //relationship with session user
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private List<Session> listSession;
+    @Builder.Default
+    private List<Session> listSession = new ArrayList<>();
 
     public boolean isActive(){
         return this.status.equals(UserStatus.ACTIVE);
@@ -102,6 +106,6 @@ public class User extends BaseEntity{
                 .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         long currentTimeInMillis = System.currentTimeMillis();
 
-        return (lockTimeInMillis + Global.LOCK_TIME_DURATION) < currentTimeInMillis;
+        return lockTimeInMillis < currentTimeInMillis;
     }
 }

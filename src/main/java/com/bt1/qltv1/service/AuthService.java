@@ -1,55 +1,88 @@
 package com.bt1.qltv1.service;
 
+import com.bt1.qltv1.dto.auth.LoginRequest;
+import com.bt1.qltv1.dto.auth.LoginResponse;
 import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
 import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
-import com.bt1.qltv1.dto.auth.RegisterRequest;
-import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
-import com.bt1.qltv1.enumeration.UserStatus;
-import com.bt1.qltv1.exception.NotFoundException;
-import com.bt1.qltv1.repository.RoleRepository;
-import com.bt1.qltv1.repository.SessionRepository;
-import com.bt1.qltv1.repository.UserRepository;
-import com.bt1.qltv1.util.ApplicationUser;
+import com.bt1.qltv1.enumeration.SessionStatus;
+import com.bt1.qltv1.exception.BadRequest;
+import com.bt1.qltv1.exception.MfaException;
+import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
+import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.util.JwtUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.LocalDateTime;
+import java.util.Set;
 
-@Log4j
 @Service
-@Transactional
+@Log4j
 @RequiredArgsConstructor
-public class AuthService implements UserDetailsService {
+public class AuthService {
     private final SessionService sessionService;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final UserService userService;
+    private final MfaService mfaService;
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(()->
-                new NotFoundException("Email not found!"));
-        return new ApplicationUser(user);
+    public LoginResponse login(LoginRequest loginRequest){
+        //log login request
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken
+                            (loginRequest.getEmail(), loginRequest.getPassword())
+            );
+        } catch (BadCredentialsException exception) {
+            throw new BadRequest("Email or password is invalid");
+        }
+        final UserDetails userDetails = userDetailsService.
+                loadUserByUsername(loginRequest.getEmail());
+
+        //check valid email
+        User user = userService.findFirstByEmail(loginRequest.getEmail());
+
+        //check is account enable MFA
+        if(user.isMfaEnabled() && (!mfaService.verifyOtp(user.getSecret(),
+                loginRequest.getCode()))){
+            throw new MfaException("Invalid MFA code");
+        }
+
+        //generate token
+        String idToken = Global.randomNumber();
+
+        final String accessToken = jwtUtil.generateToken(userDetails.getUsername(), idToken);
+        final String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername(), idToken);
+
+        LocalDateTime expiredTime = jwtUtil.extractExpiration(refreshToken);
+
+        Session newSession = new Session();
+        newSession.setExpiredDate(expiredTime);
+        newSession.setJti(idToken);
+        newSession.setStatus(SessionStatus.ACTIVE);
+
+        //save session to db
+        sessionService.saveSession(newSession, user.getId());
+
+        LoginResponse loginResponse = LoginResponse
+                .builder().accessToken(accessToken).refreshToken(refreshToken)
+                .username(loginRequest.getEmail()).id(user.getId())
+                .role((Set<GrantedAuthority>) userDetails.getAuthorities()).build();
+
+        log.info(loginResponse);
+
+        return loginResponse;
     }
 
     public void logout(HttpServletRequest request){
@@ -62,8 +95,13 @@ public class AuthService implements UserDetailsService {
         sessionService.blockSession(jwtUtil.extractJTi(jwt));
     }
 
+    //INHERITANCE FOR ADMIN
+
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request){
-        //log header
+
+
+        //CHECK JUST REFRESH TOKEN TO RENEW TOKEN
+
         String refreshToken = request.getRefreshToken();
         String email = null;
 
@@ -78,6 +116,11 @@ public class AuthService implements UserDetailsService {
         }
 
         String jti = jwtUtil.extractJTi(refreshToken);
+        LocalDateTime expiredTime = jwtUtil.extractExpiration(refreshToken);
+
+        if(!sessionService.checkIsRightRefreshToken(jti, expiredTime)){
+            throw new JwtException("Please use right refresh token");
+        }
         if (sessionService.checkIsBlockSession(jti)) {
             throw new JwtException("Your refresh token can not use any more.");
         }
@@ -94,58 +137,4 @@ public class AuthService implements UserDetailsService {
     }
 
 
-    public static String GetEmailLoggedIn() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email;
-
-        if (principal instanceof ApplicationUser) {
-            email = ((ApplicationUser) principal).getUsername();
-        } else {
-            email = principal.toString();
-        }
-
-        return email;
-    }
-
-    public void register(RegisterRequest registerRequest){
-        Optional<User> userByEmail = userRepository.findByEmail(registerRequest.getEmail());
-        if (userByEmail.isPresent()) {
-            throw new IllegalArgumentException("Email duplicate, Please retype!");
-        }
-        if (!validatePassword(registerRequest.getPassword())){
-            throw new IllegalArgumentException("""
-                    Password must be longer than 7 character.
-                    At least 1 uppercase letter.
-                    At least 1 special character.
-                    At least 1 number.""");
-
-        }
-
-        Optional<Role> roleUserOptional = roleRepository.findById(2L);
-        log.info(roleUserOptional);
-        List<Role> roleUserList = new ArrayList<>();
-        roleUserOptional.ifPresent(roleUserList::add);
-        Set<Role> roleUserSet = new HashSet<>(roleUserList);
-
-        User newUser = User.builder().fullName(registerRequest.getFullname())
-                .status(UserStatus.ACTIVE)
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .email(registerRequest.getEmail())
-                .roleSet(roleUserSet).build();
-
-
-
-        userRepository.save(newUser);
-    }
-
-    public boolean validatePassword(String password){
-        if (password == null || password.length() < 8) {
-            return false;
-//            throw new IllegalArgumentException("Password must be longer than 7 character and can't be null");
-        }
-        String regex = "^(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(password);
-        return m.matches();
-    }
 }

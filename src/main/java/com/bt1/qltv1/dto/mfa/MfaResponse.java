@@ -1,4 +1,4 @@
-package com.bt1.qltv1.dto.auth;
+package com.bt1.qltv1.dto.mfa;
 
 import lombok.*;
 
