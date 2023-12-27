@@ -1,7 +1,12 @@
 package com.bt1.qltv1.exception;
 
+import lombok.Getter;
+
+@Getter
 public class AuthException extends RuntimeException{
-    public AuthException(String message){
+    private final String errorCode;
+    public AuthException(String message,String errorCode){
         super(message);
+        this.errorCode = errorCode;
     }
 }

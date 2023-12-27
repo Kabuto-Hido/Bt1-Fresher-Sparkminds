@@ -1,22 +1,26 @@
 package com.bt1.qltv1.controller.common;
 
-import com.bt1.qltv1.dto.auth.*;
+import com.bt1.qltv1.dto.SuccessResponseDTO;
+import com.bt1.qltv1.dto.auth.LoginRequest;
+import com.bt1.qltv1.dto.auth.LoginResponse;
+import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
+import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
 import com.bt1.qltv1.dto.mfa.MfaResponse;
 import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.service.AuthService;
-import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.UserService;
+import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/common")
 public class AuthenticationController {
     private final AuthService authService;
@@ -29,7 +33,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request){
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody
+                                                                 RefreshTokenRequest request){
         return ResponseEntity.ok(authService.refreshToken(request));
     }
 
@@ -40,20 +45,24 @@ public class AuthenticationController {
     }
 
     @PostMapping("/disable-mfa")
-    public ResponseEntity<String> disableMfa(){
+    public ResponseEntity<SuccessResponseDTO> disableMfa(){
         userService.disableMfa();
-        return ResponseEntity.ok("Update MFA success!");
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                "Disable MFA success!"));
     }
 
     @PostMapping("/enable-mfa")
-    public ResponseEntity<String> verifyMfaCode(@RequestBody VerifyMfaRequest verifyMfaRequest){
+    public ResponseEntity<SuccessResponseDTO> verifyMfaCode(@Valid @RequestBody
+                                                                VerifyMfaRequest verifyMfaRequest){
         userService.enableMfa(verifyMfaRequest);
-        return ResponseEntity.ok("Enable MFA success!");
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                "Enable MFA success!"));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request){
+    public ResponseEntity<SuccessResponseDTO> logout(HttpServletRequest request){
         authService.logout(request);
-        return ResponseEntity.ok("Logout success!!!");
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                "Logout success!!!"));
     }
 }

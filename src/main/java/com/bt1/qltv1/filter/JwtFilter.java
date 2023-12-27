@@ -46,9 +46,8 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 email = jwtUtil.extractUsername(jwt);
             }catch (JwtException jwtException){
-                logger.error(new TokenException(jwtException.getMessage()));
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, jwtException.getMessage());
-                return;
+                throw new TokenException(jwtException.getMessage(),"user.token.invalid");
+
             }
         }
 
@@ -64,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 //find session from refresh token
                 String jti = jwtUtil.extractJTi(jwt);
                 if (sessionService.checkIsBlockSession(jti)) {
-                    throw new JwtException("Your token can not use any more.");
+                    throw new TokenException("Your token can not use any more.","user.session.block");
                 }
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
@@ -73,9 +72,8 @@ public class JwtFilter extends OncePerRequestFilter {
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }catch (JwtException jwtException){
-                logger.error(new TokenException(jwtException.getMessage()));
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, jwtException.getMessage());
-                return;
+                throw new TokenException(jwtException.getMessage(),"user.token.invalid");
+
             }
         }
         filterChain.doFilter(request, response);

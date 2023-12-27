@@ -20,6 +20,4 @@ public interface UserService {
     void enableMfa(VerifyMfaRequest request);
     void disableMfa();
     void updateAvatar();
-    void sendEmailToActivatedAccount(String addressGmail, ActivateMailType type);
-    String confirmToken(String token);
 }

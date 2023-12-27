@@ -111,11 +111,11 @@ public class JwtUtil {
 
         //check token is expired
         if (Boolean.TRUE.equals(isTokenExpired(token))) {
-            throw new JwtException("Your token is expired. Please login again.");
+            throw new TokenException("Your token is expired. Please login again.","token.expired");
         }
         //check token is belong to user
         if (!username.equals(userDetails.getUsername())) {
-            throw new JwtException("Token is invalid!");
+            throw new TokenException("Token is invalid!","token.invalid");
         }
     }
 }

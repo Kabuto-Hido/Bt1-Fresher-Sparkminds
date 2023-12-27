@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .disable().authorizeRequests()
                 .antMatchers("/api/v1/", "/api/v1/common/register", "/api/v1/common/login",
                         "/api/v1/common/refresh-token","/api/v1/common/confirm-email/**",
-                        "/api/v1/common/sendEmail/activate",
+                        "/api/v1/common/send-email/activate",
                         "/v2/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",
@@ -65,9 +65,9 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/webjars/**")
                 .permitAll()
-                .antMatchers("/api/v1/generate-mfa",
-                        "/api/v1/disable-mfa","/api/v1/enable-mfa",
-                        "/api/v1/logout").hasAnyRole(ADMIN.name(), USER.name())
+                .antMatchers("/api/v1/common/generate-mfa",
+                        "/api/v1/common/disable-mfa","/api/v1/common/enable-mfa",
+                        "/api/v1/common/logout").hasAnyRole(ADMIN.name(), USER.name())
                 .antMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
                 .antMatchers("/api/v1/user/**").hasRole(USER.name())
                 .anyRequest().authenticated().and()

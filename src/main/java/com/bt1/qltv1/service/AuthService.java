@@ -45,7 +45,8 @@ public class AuthService {
                             (loginRequest.getEmail(), loginRequest.getPassword())
             );
         } catch (BadCredentialsException exception) {
-            throw new BadRequest("Email or password is invalid");
+            throw new BadRequest("Email or password is invalid",
+                    "user.email-password.wrong");
         }
         final UserDetails userDetails = userDetailsService.
                 loadUserByUsername(loginRequest.getEmail());
@@ -56,7 +57,7 @@ public class AuthService {
         //check is account enable MFA
         if(user.isMfaEnabled() && (!mfaService.verifyOtp(user.getSecret(),
                 loginRequest.getCode()))){
-            throw new MfaException("Invalid MFA code");
+            throw new MfaException("Invalid MFA code","mfa.code.invalid");
         }
 
         //generate token
@@ -98,10 +99,6 @@ public class AuthService {
     //INHERITANCE FOR ADMIN
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request){
-
-
-        //CHECK JUST REFRESH TOKEN TO RENEW TOKEN
-
         String refreshToken = request.getRefreshToken();
         String email = null;
 

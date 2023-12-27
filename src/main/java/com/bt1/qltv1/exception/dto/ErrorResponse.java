@@ -1,16 +1,13 @@
-package com.bt1.qltv1.exception;
+package com.bt1.qltv1.exception.dto;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class ErrorResponse {
-    private HttpStatus status;
     private String errorMessage;
-//    private String errorCode;
-    //error code error.
+    private String errorCode;
 }

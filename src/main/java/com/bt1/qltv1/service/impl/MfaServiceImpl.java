@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 @Log4j
 @RequiredArgsConstructor
 public class MfaServiceImpl implements MfaService {
-    private final UserService userService;
     private final GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
 
     @Override
@@ -33,13 +32,12 @@ public class MfaServiceImpl implements MfaService {
 
     @Override
     public boolean verifyOtp(String secretKey, String code) {
-
         if(code.isEmpty()){
-            throw new MfaException("Missing MFA token");
+            throw new MfaException("Missing MFA token","mfa.code.invalid");
         }
 
         if(secretKey.isEmpty()){
-            throw new MfaException("Missing secret key");
+            throw new MfaException("Missing secret key","mfa.secret-key.invalid");
         }
 
         int mfaCode = parseCode(code);
@@ -51,7 +49,7 @@ public class MfaServiceImpl implements MfaService {
         try {
             return Integer.parseInt(codeString);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid MFA code");
+            throw new MfaException("Invalid MFA code","mfa.code.invalid");
         }
     }
 }

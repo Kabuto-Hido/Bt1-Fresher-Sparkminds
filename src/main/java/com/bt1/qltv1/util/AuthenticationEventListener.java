@@ -29,7 +29,8 @@ public class AuthenticationEventListener {
         log.info(user.isVerifyMail());
 
         if (!user.isVerifyMail()){
-            throw new AuthException("You must verify your email first to login!!");
+            throw new AuthException("You must verify your email first to login!!",
+                    "user.not-verify-mail");
         }
 
         //if fail attempts larger than 0
@@ -43,7 +44,7 @@ public class AuthenticationEventListener {
             log.warn("Account "+ user.getEmail()+" will unlock after "+
                     userService.getTimeRemaining(user));
             throw new AuthException("Your account will unlock after "+
-                    userService.getTimeRemaining(user));
+                    userService.getTimeRemaining(user), "user.status.block");
         }
 
         log.info("Unlock "+user.getEmail());
@@ -52,7 +53,6 @@ public class AuthenticationEventListener {
     }
 
     @EventListener
-//    @Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = LockAccountException.class)
     public void authenticationFailed(AuthenticationFailureBadCredentialsEvent event) {
         String email  = (String) event.getAuthentication().getPrincipal();
         User user = userService.findFirstByEmail(email);
@@ -60,7 +60,7 @@ public class AuthenticationEventListener {
         log.info("login fail");
         if(user ==null){
             log.warn("Not found "+email);
-            throw new NotFoundException("Email not exist!");
+            throw new NotFoundException("Email not exist!","user.email.not-exist");
         }
 
         int loginFailedAttempts = user.getFailedAttempt();
@@ -70,7 +70,8 @@ public class AuthenticationEventListener {
             if(loginFailedAttempts >= Global.MAX_FAILED_ATTEMPTS){
                 userService.lockAccount(user);
                 throw new AuthException("Your account has been locked due to 3 " +
-                        "failed attempts. It will be unlocked after 30 minutes.");
+                        "failed attempts. It will be unlocked after 30 minutes.",
+                        "user.login.fail");
             }
             userService.increaseFailedAttempts(user.getEmail(),loginFailedAttempts);
         }
@@ -80,13 +81,13 @@ public class AuthenticationEventListener {
                 userService.unlockAccount(user);
                 log.info("Unlock "+user.getEmail());
                 throw new AuthException("Your account has been unlocked." +
-                        " Please try to login again.");
+                        " Please try to login again.","user.unblock");
             }
 
             log.warn("Account "+ user.getEmail()+" will unlock after "+
                     userService.getTimeRemaining(user));
             throw new AuthException("Your account will unlock after "+
-                    userService.getTimeRemaining(user));
+                    userService.getTimeRemaining(user), "user.status.block");
         }
     }
 

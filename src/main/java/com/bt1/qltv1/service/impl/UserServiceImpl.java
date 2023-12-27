@@ -3,42 +3,32 @@ package com.bt1.qltv1.service.impl;
 import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.entity.User;
-import com.bt1.qltv1.enumeration.ActivateMailType;
 import com.bt1.qltv1.enumeration.UserStatus;
-import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.mapper.UserMapper;
 import com.bt1.qltv1.repository.UserRepository;
-import com.bt1.qltv1.service.EmailService;
 import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.ApplicationUser;
 import com.bt1.qltv1.util.Global;
-import com.bt1.qltv1.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Log4j
 @Component
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final EmailService emailService;
-    private final JwtUtil jwtUtil;
-    private final SpringTemplateEngine templateEngine;
     private final MfaService mfaService;
 
     @Override
@@ -56,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findFirstByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
-                new NotFoundException("Wrong email!!"));
+                new NotFoundException("Wrong email!!","user.email.not-exist"));
     }
 
     @Override
@@ -114,7 +104,7 @@ public class UserServiceImpl implements UserService {
             String email = UserDetailsServiceImpl.GetEmailLoggedIn();
 
             if(!mfaService.verifyOtp(request.getSecret(),request.getCode())){
-                throw new MfaException("Invalid MFA code");
+                throw new MfaException("Invalid MFA code","mfa.code.invalid");
             }
 
             User user = findFirstByEmail(email);
@@ -157,8 +147,7 @@ public class UserServiceImpl implements UserService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = ((ApplicationUser)principal).getUsername();
 
-        User user = userRepository.findByEmail(email).orElseThrow(() ->
-                new NotFoundException("Wrong email!!"));
+        User user = findFirstByEmail(email);
         user.setAvatar(Global.DEFAULT_AVATAR);
         userRepository.save(user);
 
@@ -167,43 +156,4 @@ public class UserServiceImpl implements UserService {
     }
         log.info("updateAvatar method finished ");
     }
-
-    @Override
-    public void sendEmailToActivatedAccount(String addressGmail, ActivateMailType type) {
-        final String token = jwtUtil.generateEmailToken(addressGmail);
-        String link = null;
-        String otp = null;
-
-        Context context = new Context();
-        context.setVariable("email",addressGmail);
-        if(type.equals(ActivateMailType.OTP)){
-            otp = Global.getOTP();
-        }
-        if (type.equals(ActivateMailType.LINK)) {
-            link = "http://localhost:8082/api/v1/common/confirm-email?token=" + token;
-
-        }
-        context.setVariable("otp",otp);
-        context.setVariable("url", link);
-        String body = templateEngine.process("email-verify-template.html", context);
-
-        emailService.sendAsHtml(addressGmail,
-                body, "Verify your gmail for register");
-    }
-
-    @Override
-    public String confirmToken(String token) {
-        if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(token))) {
-            throw new BadRequest("Email expired");
-        }
-        String email = jwtUtil.extractUsername(token);
-        Optional<User> userConfirm = userRepository.findFirstByEmailAndVerifyMail(email,
-                true);
-        if (userConfirm.isPresent()) {
-            throw new BadRequest("Email already verify mail");
-        }
-        userRepository.activateAccount(email);
-        return "Account has been activated";
-    }
-
 }

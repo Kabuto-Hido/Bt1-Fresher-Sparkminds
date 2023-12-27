@@ -3,6 +3,7 @@ package com.bt1.qltv1.entity;
 
 import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.enumeration.UserStatus;
+import com.bt1.qltv1.validation.Phone;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,7 +38,7 @@ public class User extends BaseEntity{
     @Column(name = "fullname", length = 100)
     private String fullName;
 
-    @Pattern(regexp = "^\\d{10}$")
+    @Phone
     @Column(name = "phone", unique = true)
     private String phone;
 
