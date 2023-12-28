@@ -100,7 +100,7 @@ public class AuthService {
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request){
         String refreshToken = request.getRefreshToken();
-        String email = null;
+        String email;
 
         try {
             email = jwtUtil.extractUsername(refreshToken);

@@ -34,7 +34,6 @@ import static com.bt1.qltv1.enumeration.UserRole.USER;
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtFilter jwtFilter;
-    //private final PasswordEncoder passwordEncoder;
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -56,7 +55,7 @@ public class SecurityConfig {
                 .disable().authorizeRequests()
                 .antMatchers("/api/v1/", "/api/v1/common/register", "/api/v1/common/login",
                         "/api/v1/common/refresh-token","/api/v1/common/confirm-email/**",
-                        "/api/v1/common/send-email/activate",
+                        "/api/v1/common/send-email/activate","/api/v1/common/verify-otp",
                         "/v2/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",
@@ -76,8 +75,6 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        //http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
-
         return http.build();
     }
 

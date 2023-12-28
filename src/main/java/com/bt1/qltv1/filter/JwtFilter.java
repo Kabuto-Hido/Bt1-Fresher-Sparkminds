@@ -63,7 +63,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 //find session from refresh token
                 String jti = jwtUtil.extractJTi(jwt);
                 if (sessionService.checkIsBlockSession(jti)) {
-                    throw new TokenException("Your token can not use any more.","user.session.block");
+                    throw new TokenException("Your token can not use any more.",
+                            "user.session.block");
                 }
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =

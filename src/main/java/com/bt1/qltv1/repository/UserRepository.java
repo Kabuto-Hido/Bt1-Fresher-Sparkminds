@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Transactional
-    @Query("update User u set u.verifyMail = true where u.email = ?1")
+    @Query("update User u set u.verifyMail = true, u.otp = null, u.otpExpired = null where u.email = ?1")
     void activateAccount(String email);
 
     Optional<User> findFirstByEmailAndVerifyMail(String email, boolean isVerify);

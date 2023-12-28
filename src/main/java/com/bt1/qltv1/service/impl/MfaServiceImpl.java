@@ -1,10 +1,8 @@
 package com.bt1.qltv1.service.impl;
 
 import com.bt1.qltv1.dto.mfa.MfaResponse;
-import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.service.MfaService;
-import com.bt1.qltv1.service.UserService;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;

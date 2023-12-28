@@ -2,7 +2,6 @@ package com.bt1.qltv1.exception;
 
 import com.bt1.qltv1.exception.dto.ErrorResponse;
 import com.bt1.qltv1.exception.dto.ViolationResponse;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

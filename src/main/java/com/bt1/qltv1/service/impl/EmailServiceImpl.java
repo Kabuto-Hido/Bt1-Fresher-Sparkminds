@@ -7,8 +7,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
@@ -38,7 +36,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendAsHtml(String sendTo, String body, String subject) {
         MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = null;
+        MimeMessageHelper helper;
 
         try {
             helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());

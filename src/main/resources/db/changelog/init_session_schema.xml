@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="5" author="liquibase">
+    <changeSet id="createTableSession" author="liquibase">
         <createTable tableName="session">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -19,21 +19,6 @@
                              referencedColumnNames="id" referencedTableName="user"/>
             </column>
         </createTable>
-    </changeSet>
-
-    <changeSet id="NewColumnToUserTable" author="liquibase">
-        <addColumn tableName="user">
-            <column name="mfa_enabled" type="boolean" defaultValueBoolean="false" />
-        </addColumn>
-        <addColumn tableName="user">
-            <column name="secret" type="varchar(255)"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="addColumnVerifyMailToUser" author="liquibase">
-        <addColumn tableName="user">
-            <column name="verify_mail" type="boolean" defaultValueBoolean="false" />
-        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

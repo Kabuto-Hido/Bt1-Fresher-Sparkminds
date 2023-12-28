@@ -4,6 +4,7 @@ import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.enumeration.UserStatus;
+import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.mapper.UserMapper;
@@ -60,7 +61,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void lockAccount(User user) {
-//        User findUser = findFirstByEmail(user.getEmail());
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime lockTime = now.plusMinutes((Global.LOCK_TIME_DURATION / 60000));
         user.setLockTime(lockTime);
@@ -153,6 +153,8 @@ public class UserServiceImpl implements UserService {
 
     } catch (Exception e) {
         log.error("An error occurred in updateAvatar method", e);
+        throw new BadRequest("An error occurred in updateAvatar method",
+                "user.avatar.fail");
     }
         log.info("updateAvatar method finished ");
     }

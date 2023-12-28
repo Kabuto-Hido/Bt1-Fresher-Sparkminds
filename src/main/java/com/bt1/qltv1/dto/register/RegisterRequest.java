@@ -1,15 +1,10 @@
 package com.bt1.qltv1.dto.register;
 
 import com.bt1.qltv1.entity.BaseEntity;
-import com.bt1.qltv1.entity.User;
-import com.bt1.qltv1.enumeration.ActivateMailType;
 import com.bt1.qltv1.validation.Phone;
 import lombok.*;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -37,7 +32,4 @@ public class RegisterRequest extends BaseEntity {
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,}$",
             message = "{user.password.weak}")
     private String password;
-
-    @Enumerated(EnumType.STRING)
-    private ActivateMailType mailType = ActivateMailType.LINK;
 }

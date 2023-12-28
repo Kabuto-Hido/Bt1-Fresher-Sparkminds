@@ -1,15 +1,15 @@
 package com.bt1.qltv1.entity;
 
 
-import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.enumeration.UserStatus;
+import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.validation.Phone;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 //@Data
 //@EqualsAndHashCode(callSuper = true)
@@ -35,29 +35,24 @@ public class User extends BaseEntity{
     private Long id;
 
     @NotBlank(message = "Name should not be null")
-    @Column(name = "fullname", length = 100)
+    @Column(name = "fullname", length = 100, nullable = false)
     private String fullName;
-
-    @Phone
-    @Column(name = "phone", unique = true)
-    private String phone;
 
     @Column(name = "avatar")
     @Builder.Default
     private String avatar = Global.DEFAULT_AVATAR;
+
+    @Phone
+    @Column(name = "phone", unique = true)
+    private String phone;
 
     @Email(message = "Please enter the valid email")
     @Column(name = "email", unique = true)
     private String email;
 
     @NotBlank(message = "Password should not be null")
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
-
-    @Column(name="status")
-    @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private UserStatus status = UserStatus.ACTIVE;
 
     //Wrong number of login attempts
     @Column(name = "failed_attempt")
@@ -67,6 +62,11 @@ public class User extends BaseEntity{
     //account lock period
     @Column(name = "lock_time")
     private LocalDateTime lockTime;
+
+    @Column(name="status")
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private UserStatus status = UserStatus.ACTIVE;
 
     @Column(name = "mfa_enabled")
     @Builder.Default
@@ -78,6 +78,12 @@ public class User extends BaseEntity{
     @Column(name = "verify_mail")
     @Builder.Default
     private boolean verifyMail = false;
+
+    @Column(name = "otp", length = 6)
+    private String otp;
+
+    @Column(name = "otp_expired")
+    private LocalDateTime otpExpired;
 
     //relationship with role
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
