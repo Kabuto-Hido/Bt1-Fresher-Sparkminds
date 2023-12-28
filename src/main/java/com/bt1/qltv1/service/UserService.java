@@ -20,4 +20,5 @@ public interface UserService {
     void enableMfa(VerifyMfaRequest request);
     void disableMfa();
     void updateAvatar();
+
 }

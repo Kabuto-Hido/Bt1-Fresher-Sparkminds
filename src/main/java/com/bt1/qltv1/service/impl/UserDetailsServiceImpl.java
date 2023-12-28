@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserService userService;
-
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userService.findFirstByEmail(email);

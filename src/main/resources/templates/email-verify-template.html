@@ -19,37 +19,46 @@
                 text-align: center;
                 padding: 10px 0;
             }
+            .center-body{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
         </style>
     </head>
 
     <body>
-        <h1>Confirm your account</h1>
-        <div>Welcome to Library SparkMinds</div>
-        <p>
-            Your account has been created on our platform; here is your login information
-            <br/><br/>
-            Email address : <b th:text="${email}">email</b><br/>
-            <br/>
-            To confirm the validity of your email address,
-            <span th:if="${url != null}">please click on the link</span>
-            <span th:if="${otp != null}"> or use this OTP below</span>
-        </p>
+    <div class="center-body">
+        <div class="aob">
+            <h1>Confirm your account</h1>
+            <div>Welcome to Library SparkMinds</div>
+            <p>
+                Your account has been created on our platform; here is your login information
+                <br/><br/>
+                Email address : <b th:text="${email}">email</b><br/>
+                <br/>
+                To confirm the validity of your email address,
+                <span th:if="${url != null}">please click on the link</span>
+                <span th:if="${otp != null}"> or use this OTP below</span>
+            </p>
 
+            <p style="text-align: left">
+                <th:block th:if="${url!= null}">
+                    <a class="link" href="#" th:href="${url}">Confirm my account</a>
+                </th:block>
+                <th:block th:if="${otp!= null}">
+                    <p class="otp" th:text="${otp}">OTP</p>
+                </th:block>
+            </p>
 
-        <p style="text-align: left">
-            <th:block th:if="${url!= null}">
-                <a class="link" href="#" th:href="${url}">Confirm my account</a>
-            </th:block>
-            <th:block th:if="${otp!= null}">
-                <p class="otp" th:text="${otp}"></p>
-            </th:block>
-        </p>
-
-        <br>
-        <p>
-            Regards, <br/>
-            &emsp; <em>The SparkMinds Team</em>
-        </p>
+            <br>
+            <p>
+                Regards, <br/>
+                &emsp; <em>The SparkMinds Team</em>
+            </p>
+        </div>
+    </div>
     </body>
 
 </html>

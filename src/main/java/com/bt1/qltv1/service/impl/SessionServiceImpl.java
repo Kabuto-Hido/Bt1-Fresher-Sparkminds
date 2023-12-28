@@ -45,11 +45,9 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public boolean checkIsBlockSession(String jti) {
-        Optional<Session> session = sessionRepository.findByJtiAndStatus(jti,SessionStatus.BLOCK);
-        if(session.isEmpty()){
-            throw new AuthException("Not found user session","user.session.not-exist");
-        }
-        return true;
+        Session session = sessionRepository.findByJti(jti).orElseThrow(()->
+                new AuthException("Not found user session","user.session.not-exist"));
+        return session.isBlock();
     }
 
     @Override

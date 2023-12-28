@@ -16,9 +16,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -33,6 +35,7 @@ public class RegisterService {
     private final JwtUtil jwtUtil;
     private final SpringTemplateEngine templateEngine;
 
+    @Transactional(rollbackFor = MessagingException.class)
     public void register(RegisterRequest registerRequest) {
         Optional<User> userByEmail = userRepository.findByEmail(registerRequest.getEmail());
         if (userByEmail.isPresent()) {
@@ -56,17 +59,20 @@ public class RegisterService {
         LocalDateTime verifyExpired = jwtUtil.extractExpiration(token);
 
         String otp = Global.getOTP();
-        sendEmailToActivatedAccount(registerRequest.getEmail(), token, otp);
 
         User newUser = User.builder().fullName(registerRequest.getFullname())
                 .status(UserStatus.ACTIVE)
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .email(registerRequest.getEmail())
+                .phone(registerRequest.getPhone())
                 .otp(otp)
                 .otpExpired(verifyExpired)
                 .roleSet(roleUserSet).build();
 
         userRepository.save(newUser);
+
+        sendEmailToActivatedAccount(registerRequest.getEmail(), token, otp);
+
     }
 
     public void sendEmailToActivatedAccount(String addressGmail, String token, String otp) {

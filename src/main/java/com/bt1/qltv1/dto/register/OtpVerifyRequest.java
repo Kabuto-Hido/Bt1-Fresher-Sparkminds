@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @Data
 public class OtpVerifyRequest {
-    @Email(message = "Please enter the valid email")
+    @Email(message = "{user.email.invalid}")
     private String email;
     @Pattern(regexp = "^[0-9]{6}$",message = "{user.otp.invalid}")
     private String otp;

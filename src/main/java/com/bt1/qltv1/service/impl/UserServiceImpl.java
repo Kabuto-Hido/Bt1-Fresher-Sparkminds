@@ -9,16 +9,21 @@ import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.mapper.UserMapper;
 import com.bt1.qltv1.repository.UserRepository;
+import com.bt1.qltv1.service.EmailService;
 import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.ApplicationUser;
 import com.bt1.qltv1.util.Global;
+import com.bt1.qltv1.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -158,4 +163,5 @@ public class UserServiceImpl implements UserService {
     }
         log.info("updateAvatar method finished ");
     }
+
 }
