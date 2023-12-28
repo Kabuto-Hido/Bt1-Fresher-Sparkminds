@@ -1,0 +1,123 @@
+[2023-12-24 09:54:20,078] http-nio-8082-exec-3 com.bt1.qltv1.controller.common.AuthenticationController 101 INFO   - Exact refresh token!
+[2023-12-24 09:54:20,290] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 58 INFO   - now 2023-12-24T09:54:20.287646900
+[2023-12-24 09:54:20,456] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 41 INFO   - expired date: 2023-12-28T09:30:53
+[2023-12-24 09:54:21,231] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuthService 70 INFO   - access token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzQ3Mjg2MSwiaWF0IjoxNzAzMzg2NDYxLCJqdGkiOiIzNzM4NTAzMmU2MTA0ZTdiODhmMDg0YjM0NTdkZGY3MSJ9.7Gl8sDG4cXb9B8BfxwW_a1UIhEONMpwi2UQeIOu4ffg
+[2023-12-24 09:54:21,237] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuthService 76 INFO   - RefreshTokenResponse: RefreshTokenResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzQ3Mjg2MSwiaWF0IjoxNzAzMzg2NDYxLCJqdGkiOiIzNzM4NTAzMmU2MTA0ZTdiODhmMDg0YjM0NTdkZGY3MSJ9.7Gl8sDG4cXb9B8BfxwW_a1UIhEONMpwi2UQeIOu4ffg, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzczMDY1MywiaWF0IjoxNzAzMTI1ODUzLCJqdGkiOiIzNzM4NTAzMmU2MTA0ZTdiODhmMDg0YjM0NTdkZGY3MSJ9.QG49uThvo2gYL8mRD4jfzYpSmKwYzZDfGc4N6ehO_oA)
+[2023-12-24 09:54:39,365] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 58 INFO   - now 2023-12-24T09:54:39.365675500
+[2023-12-24 09:54:39,370] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 41 INFO   - expired date: 2023-12-25T09:54:21
+[2023-12-24 20:44:01,943] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T20:44:01.912618300
+[2023-12-24 20:44:02,357] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-28T09:30:53
+[2023-12-24 20:44:02,434] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.AuthService 68 INFO   - access token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzUxMTg0MiwiaWF0IjoxNzAzNDI1NDQyLCJqdGkiOiIzNzM4NTAzMmU2MTA0ZTdiODhmMDg0YjM0NTdkZGY3MSJ9.FQpB5s4UHt7CH01ppLG3_dwR-Q2ALX40VZSf2DiV9x4
+[2023-12-24 20:44:02,436] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.AuthService 74 INFO   - RefreshTokenResponse: RefreshTokenResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzUxMTg0MiwiaWF0IjoxNzAzNDI1NDQyLCJqdGkiOiIzNzM4NTAzMmU2MTA0ZTdiODhmMDg0YjM0NTdkZGY3MSJ9.FQpB5s4UHt7CH01ppLG3_dwR-Q2ALX40VZSf2DiV9x4, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzczMDY1MywiaWF0IjoxNzAzMTI1ODUzLCJqdGkiOiIzNzM4NTAzMmU2MTA0ZTdiODhmMDg0YjM0NTdkZGY3MSJ9.QG49uThvo2gYL8mRD4jfzYpSmKwYzZDfGc4N6ehO_oA)
+[2023-12-24 20:52:08,990] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T20:52:08.989229300
+[2023-12-24 20:52:08,998] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 21:14:32,318] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 21:16:51,203] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 21:16:51,212] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 80 INFO   - login fail attempts 1
+[2023-12-24 21:20:38,973] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 21:20:38,980] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 80 INFO   - login fail attempts 2
+[2023-12-24 21:20:42,147] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 21:20:42,149] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.UserServiceImpl 80 INFO   - login fail attempts 3
+[2023-12-24 21:20:44,410] http-nio-8082-exec-6 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 21:20:44,452] http-nio-8082-exec-6 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 21:25:40,911] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 21:25:41,044] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 93 INFO   - lock account:admin in time 2023-12-24T21:55:40.960973400
+[2023-12-24 21:27:59,817] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 21:27:59,832] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 93 INFO   - lock account:admin in time 2023-12-24T21:57:59.820190200
+[2023-12-24 21:40:47,534] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 55 INFO   - Optional.empty
+[2023-12-24 22:04:12,841] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:04:12.840970700
+[2023-12-24 22:04:12,849] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:04:17,200] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:04:17.200197300
+[2023-12-24 22:04:17,204] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:04:17,309] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - a@gmail.com
+[2023-12-24 22:07:07,820] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:07:07.819563
+[2023-12-24 22:07:07,834] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:07:08,291] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.UserServiceImpl 133 INFO   - update user: a@gmail.com
+[2023-12-24 22:07:08,299] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.UserServiceImpl 135 INFO   - update user: a@gmail.com
+[2023-12-24 22:08:30,788] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:08:30.776498400
+[2023-12-24 22:08:30,829] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:10:39,085] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:10:39.084833500
+[2023-12-24 22:10:39,095] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:11:38,137] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:11:38.136530800
+[2023-12-24 22:11:38,143] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:13:07,030] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:13:07.030123800
+[2023-12-24 22:13:07,037] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:16:51,698] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:16:51.697844700
+[2023-12-24 22:16:51,706] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:18:10,639] http-nio-8082-exec-1 com.bt1.qltv1.util.AuthenticationEventListener 26 INFO   - login success
+[2023-12-24 22:18:10,991] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-31T22:18:10
+[2023-12-24 22:18:11,006] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.SessionServiceImpl 23 INFO   - Save session: 2
+[2023-12-24 22:23:39,646] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:23:39.645730
+[2023-12-24 22:23:39,662] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:27:21,954] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:27:21.953412300
+[2023-12-24 22:27:21,964] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:32:23,472] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T22:32:23.470756600
+[2023-12-24 22:32:23,489] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 22:32:24,208] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - a@gmail.com
+[2023-12-24 22:32:24,803] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 146 INFO   - updateAvatar method finished 
+[2023-12-24 22:35:53,220] http-nio-8082-exec-5 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:35:53,223] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 1
+[2023-12-24 22:35:54,865] http-nio-8082-exec-7 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:35:54,866] http-nio-8082-exec-7 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 2
+[2023-12-24 22:35:56,192] http-nio-8082-exec-9 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:35:56,193] http-nio-8082-exec-9 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 3
+[2023-12-24 22:35:58,559] http-nio-8082-exec-1 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:35:58,570] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 22:36:30,122] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:36:30,133] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 22:42:29,166] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:42:49,070] http-nio-8082-exec-5 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:47:41,068] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:48:15,210] http-nio-8082-exec-4 com.bt1.qltv1.util.AuthenticationEventListener 26 INFO   - login success
+[2023-12-24 22:48:15,632] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-31T22:48:15
+[2023-12-24 22:48:15,642] http-nio-8082-exec-4 com.bt1.qltv1.service.impl.SessionServiceImpl 25 INFO   - Save session: 2
+[2023-12-24 22:49:18,272] http-nio-8082-exec-7 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:49:18,277] http-nio-8082-exec-7 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 1
+[2023-12-24 22:49:29,308] http-nio-8082-exec-8 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:49:29,310] http-nio-8082-exec-8 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 2
+[2023-12-24 22:49:31,766] http-nio-8082-exec-1 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:49:31,768] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 3
+[2023-12-24 22:49:33,729] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 51 INFO   - login fail
+[2023-12-24 22:51:39,704] http-nio-8082-exec-1 com.bt1.qltv1.util.AuthenticationEventListener 48 INFO   - admin
+[2023-12-24 22:51:39,764] http-nio-8082-exec-1 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 22:54:00,583] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 22:58:43,961] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:02:40,392] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:05:23,694] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 96 INFO   - lock account:admin in time 2023-12-24T23:32:40.425314500
+[2023-12-24 23:10:05,919] http-nio-8082-exec-1 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:10:06,066] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 23:11:44,163] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:15:11,423] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 23:17:11,209] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:17:11,225] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 95 INFO   - lock time 2023-12-24T23:47:11.224976100
+[2023-12-24 23:18:20,913] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 23:19:26,999] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:19:27,001] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.UserServiceImpl 95 INFO   - lock time 2023-12-24T23:49:27.001572
+[2023-12-24 23:19:34,310] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 23:21:32,696] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:21:32,701] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 95 INFO   - lock time 2023-12-24T23:51:32.700268200
+[2023-12-24 23:21:32,745] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 23:24:15,686] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:24:15,698] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 95 INFO   - lock time 2023-12-24T23:54:15.698032500
+[2023-12-24 23:24:15,738] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - Optional[anonymousUser]
+[2023-12-24 23:35:32,864] http-nio-8082-exec-2 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:35:32,873] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 1
+[2023-12-24 23:35:32,925] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 23:44:05,229] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T23:44:05.228134600
+[2023-12-24 23:44:05,239] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 23:44:11,085] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:44:11,088] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 1
+[2023-12-24 23:44:29,940] http-nio-8082-exec-5 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:44:29,940] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 2
+[2023-12-24 23:44:31,556] http-nio-8082-exec-7 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:44:31,557] http-nio-8082-exec-7 com.bt1.qltv1.service.impl.UserServiceImpl 84 INFO   - login fail attempts 3
+[2023-12-24 23:44:33,171] http-nio-8082-exec-9 com.bt1.qltv1.util.AuthenticationEventListener 52 INFO   - login fail
+[2023-12-24 23:44:33,172] http-nio-8082-exec-9 com.bt1.qltv1.service.impl.UserServiceImpl 98 INFO   - lock time 2023-12-25T00:14:33.172781900
+[2023-12-24 23:44:33,202] http-nio-8082-exec-9 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser
+[2023-12-24 23:48:30,092] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-24T23:48:30.091683
+[2023-12-24 23:48:30,094] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-25T20:44:02
+[2023-12-24 23:48:30,110] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - a@gmail.com
+[2023-12-24 23:48:30,222] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 151 INFO   - updateAvatar method finished 
+[2023-12-24 23:49:50,215] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.UserServiceImpl 66 INFO   - Optional[BaseEntity(createdDate=2023-12-17T19:22:50, modifiedDate=2023-12-17T19:22:52, createdBy=null, modifiedBy=null)]
+[2023-12-24 23:49:50,451] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.UserServiceImpl 77 INFO   - New user: BaseEntity(createdDate=null, modifiedDate=null, createdBy=null, modifiedBy=null)
+[2023-12-24 23:49:50,458] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 15 INFO   - anonymousUser

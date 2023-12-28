@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="createTableSession" author="liquibase">
+        <createTable tableName="session">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="jti" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="expired_date" type="datetime"/>
+            <column name="status" type="enum('ACTIVE', 'BLOCK')"/>
+            <column name="user_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_session_user"
+                             referencedColumnNames="id" referencedTableName="user"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
