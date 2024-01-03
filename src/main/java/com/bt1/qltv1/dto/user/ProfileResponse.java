@@ -20,6 +20,9 @@ public class ProfileResponse extends BaseEntity {
     private String phone;
     private String avatar;
     private String status;
+    private int failedAttempt;
+    private boolean mfaEnabled;
+    private boolean verifyMail;
     private List<String> roles;
 
 }

@@ -10,8 +10,9 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override
     public Optional<String> getCurrentAuditor() {
-        String email = UserDetailsServiceImpl.GetEmailLoggedIn();
+        String email = UserDetailsServiceImpl.getEmailLoggedIn();
         log.info(email);
-        return Optional.ofNullable(email).filter(s -> !s.isEmpty());
+        return Optional.of(Optional.ofNullable(email)
+                .orElse("System"));
     }
 }

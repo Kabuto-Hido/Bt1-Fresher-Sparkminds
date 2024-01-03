@@ -58,7 +58,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = MessagingException.class)
     @Override
     public void changePassword(ChangePasswordRequest changePasswordRequest) {
-        String email = UserDetailsServiceImpl.GetEmailLoggedIn();
+        String email = UserDetailsServiceImpl.getEmailLoggedIn();
 
         User user = userRepository.findByEmail(email).orElseThrow(()->
                 new NotFoundException("Your email not exist!","user.email.not-exist"));
@@ -84,7 +84,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(rollbackFor = MessagingException.class)
     @Override
     public void changeEmail(String newEmail) {
-        String oldEmail = UserDetailsServiceImpl.GetEmailLoggedIn();
+        String oldEmail = UserDetailsServiceImpl.getEmailLoggedIn();
         if(oldEmail.equals(newEmail)){
             throw new BadRequest("Email duplicate, Please retype!", "user.email.email-existed");
 
@@ -109,7 +109,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void verifyNewEmailOtp(OtpVerifyRequest otpVerifyRequest) {
-        String oldEmail = UserDetailsServiceImpl.GetEmailLoggedIn();
+        String oldEmail = UserDetailsServiceImpl.getEmailLoggedIn();
 
         User user = findUserByEmail(oldEmail);
 

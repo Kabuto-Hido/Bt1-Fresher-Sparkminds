@@ -10,14 +10,13 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-
 
 @AllArgsConstructor
 @SuperBuilder
@@ -29,7 +28,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseEntity{
+public class User extends BaseEntity implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -114,5 +114,21 @@ public class User extends BaseEntity{
         long currentTimeInMillis = System.currentTimeMillis();
 
         return lockTimeInMillis < currentTimeInMillis;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
+        return id != null && id.equals(((User) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

@@ -7,10 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +59,20 @@ public class CustomExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthException(AuthException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(ex.getMessage(), ex.getErrorCode()));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ResponseEntity<List<ViolationResponse>> handleConstraintValidationException(
+            ConstraintViolationException ex) {
+        List<ViolationResponse> errors = new ArrayList<>();
+        for (ConstraintViolation violation : ex.getConstraintViolations()) {
+            errors.add(new ViolationResponse(violation.getPropertyPath().toString()
+                    , violation.getMessage(),""));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errors);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -42,11 +42,10 @@ public class RegisterService {
             throw new BadRequest("Email duplicate, Please retype!", "user.email.email-existed");
         }
 
-        userByEmail.ifPresent(user -> {
-            if (!user.getPhone().equals(registerRequest.getPhone())) {
-                throw new BadRequest("Phone duplicate, Please retype!", "user.phone.phone-existed");
-            }
-        });
+        Optional<User> userByPhone = userRepository.findByPhone(registerRequest.getPhone());
+        if (userByPhone.isPresent()) {
+            throw new BadRequest("Phone duplicate, Please retype!", "user.phone.phone-existed");
+        }
 
         Optional<Role> roleUserOptional = roleRepository.findById(2L);
         log.info(roleUserOptional);

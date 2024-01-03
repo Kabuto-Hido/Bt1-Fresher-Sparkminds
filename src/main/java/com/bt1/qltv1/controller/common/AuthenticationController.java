@@ -40,7 +40,7 @@ public class AuthenticationController {
 
     @GetMapping("/generate-mfa")
     public ResponseEntity<MfaResponse> generateMfa(){
-        String email = UserDetailsServiceImpl.GetEmailLoggedIn();
+        String email = UserDetailsServiceImpl.getEmailLoggedIn();
         return ResponseEntity.ok(mfaService.generateSecretKeyAndQrcode(email));
     }
 

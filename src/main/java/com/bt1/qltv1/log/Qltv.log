@@ -1,55 +1,95 @@
-[2023-12-28 12:06:27,284] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
-[2023-12-28 12:06:27,938] http-nio-8082-exec-2 com.bt1.qltv1.validation.PhoneValidator 33 ERROR  - The phone number supplied was null.
-[2023-12-28 12:08:38,807] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
-[2023-12-28 14:52:43,565] http-nio-8082-exec-6 com.bt1.qltv1.service.RegisterService 49 INFO   - Optional[BaseEntity(createdDate=2023-12-28T11:56:52, modifiedDate=2023-12-28T11:56:56, createdBy=admin, modifiedBy=admin)]
-[2023-12-28 14:52:43,717] http-nio-8082-exec-6 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-28T15:07:43
-[2023-12-28 14:52:48,053] http-nio-8082-exec-6 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
-[2023-12-28 14:52:48,192] http-nio-8082-exec-6 com.bt1.qltv1.validation.PhoneValidator 33 ERROR  - The phone number supplied was null.
-[2023-12-28 14:55:26,495] http-nio-8082-exec-2 com.bt1.qltv1.service.RegisterService 49 INFO   - Optional[BaseEntity(createdDate=2023-12-28T11:56:52, modifiedDate=2023-12-28T11:56:56, createdBy=admin, modifiedBy=admin)]
-[2023-12-28 14:55:27,060] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-28T15:10:26
-[2023-12-28 14:55:31,809] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
-[2023-12-28 14:55:38,954] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T14:55:38.954742900
-[2023-12-28 14:55:38,963] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-28T15:10:26
-[2023-12-28 14:56:29,743] http-nio-8082-exec-5 com.bt1.qltv1.util.AuthenticationEventListener 27 INFO   - login success
-[2023-12-28 14:56:29,744] http-nio-8082-exec-5 com.bt1.qltv1.util.AuthenticationEventListener 29 INFO   - true
-[2023-12-28 14:56:29,762] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T14:56:29
-[2023-12-28 14:56:29,773] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.SessionServiceImpl 28 INFO   - Save session: 2
-[2023-12-28 14:56:29,821] http-nio-8082-exec-5 com.bt1.qltv1.service.AuthService 84 INFO   - LoginResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29hbmg5MXRoYW5nbmhhdEBnbWFpbC5jb20iLCJleHAiOjE3MDM4MzY1ODksImlhdCI6MTcwMzc1MDE4OSwianRpIjoiNDY0MjY4MTIzYzk5NDU0M2E0MjJjZjk4ZjRhZGY3ZmMifQ.XKMzN8yclNzcOBGsmHuAMA3aq63cLIKWC1cfKGD60Fs, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29hbmg5MXRoYW5nbmhhdEBnbWFpbC5jb20iLCJleHAiOjE3MDQzNTQ5ODksImlhdCI6MTcwMzc1MDE4OSwianRpIjoiNDY0MjY4MTIzYzk5NDU0M2E0MjJjZjk4ZjRhZGY3ZmMifQ.e0BD5sq0QDzRQnA8tl4WKbNDVC-U4JKxqDq1UPEZ1vI, id=2, username=ngoanh91thangnhat@gmail.com, role=[ROLE_USER])
-[2023-12-28 14:59:04,495] http-nio-8082-exec-8 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
-[2023-12-28 15:16:07,208] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
-[2023-12-28 15:16:45,857] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 27 INFO   - login success
-[2023-12-28 15:16:45,859] http-nio-8082-exec-3 com.bt1.qltv1.util.AuthenticationEventListener 29 INFO   - true
-[2023-12-28 15:16:46,231] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T15:16:46
-[2023-12-28 15:16:46,256] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.SessionServiceImpl 28 INFO   - Save session: 2
-[2023-12-28 15:16:46,357] http-nio-8082-exec-3 com.bt1.qltv1.service.AuthService 84 INFO   - LoginResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29hbmg5MXRoYW5nbmhhdEBnbWFpbC5jb20iLCJleHAiOjE3MDM4Mzc4MDUsImlhdCI6MTcwMzc1MTQwNSwianRpIjoiNjI2ODc2ZWYwNWQxNGU2ODk1YWRiODk1ZmE2OWJiZmQifQ.h6p1BELb0oncFI_XpbGrA-j8FZXpfB-bk_wNEiQ6_vs, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29hbmg5MXRoYW5nbmhhdEBnbWFpbC5jb20iLCJleHAiOjE3MDQzNTYyMDYsImlhdCI6MTcwMzc1MTQwNiwianRpIjoiNjI2ODc2ZWYwNWQxNGU2ODk1YWRiODk1ZmE2OWJiZmQifQ.jm3GPkpre1to8FjShnJ8SHVcfpxHUeto22tG2CF5q-c, id=2, username=ngoanh91thangnhat@gmail.com, role=[ROLE_USER])
-[2023-12-28 15:57:08,145] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T15:57:08.144750200
-[2023-12-28 15:57:08,491] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T15:16:45
-[2023-12-28 16:00:59,032] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T16:00:59.031331500
-[2023-12-28 16:00:59,041] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T15:16:45
-[2023-12-28 16:05:01,325] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T16:05:01.324657600
-[2023-12-28 16:05:01,334] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T15:16:45
-[2023-12-28 16:05:52,231] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T16:05:52.231271300
-[2023-12-28 16:05:52,233] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T15:16:45
-[2023-12-28 16:05:53,133] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - ngoanh91thangnhat@gmail.com
-[2023-12-28 16:06:10,496] http-nio-8082-exec-5 com.bt1.qltv1.util.AuthenticationEventListener 27 INFO   - login success
-[2023-12-28 16:06:10,498] http-nio-8082-exec-5 com.bt1.qltv1.util.AuthenticationEventListener 29 INFO   - true
-[2023-12-28 16:06:10,541] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T16:06:10
-[2023-12-28 16:06:10,550] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.SessionServiceImpl 28 INFO   - Save session: 2
-[2023-12-28 16:06:10,625] http-nio-8082-exec-5 com.bt1.qltv1.service.AuthService 84 INFO   - LoginResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29hbmg5MXRoYW5nbmhhdEBnbWFpbC5jb20iLCJleHAiOjE3MDM4NDA3NzAsImlhdCI6MTcwMzc1NDM3MCwianRpIjoiZGViODUyOGM0ODFhNDIwMzk3ZWMyN2M4NjA2YjM1OTcifQ.v4jwdDOwg4KHXk1mOLfjTrvDRQ4HcCtyT05aHostfP8, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZ29hbmg5MXRoYW5nbmhhdEBnbWFpbC5jb20iLCJleHAiOjE3MDQzNTkxNzAsImlhdCI6MTcwMzc1NDM3MCwianRpIjoiZGViODUyOGM0ODFhNDIwMzk3ZWMyN2M4NjA2YjM1OTcifQ.KRZ1oRdJ76mlGnv0mJe_Vmy8wwZpV9o81URxvtP64VQ, id=2, username=ngoanh91thangnhat@gmail.com, role=[ROLE_USER])
-[2023-12-28 16:06:37,122] http-nio-8082-exec-6 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T16:06:37.122707300
-[2023-12-28 16:06:37,126] http-nio-8082-exec-6 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T15:16:45
-[2023-12-28 16:06:58,330] http-nio-8082-exec-7 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T16:06:58.330525900
-[2023-12-28 16:06:58,333] http-nio-8082-exec-7 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T16:06:10
-[2023-12-28 16:07:35,692] http-nio-8082-exec-9 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T16:07:35.692407100
-[2023-12-28 16:07:35,694] http-nio-8082-exec-9 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T16:06:10
-[2023-12-28 16:58:56,161] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T16:58:56.160494600
-[2023-12-28 16:58:56,173] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T16:06:10
-[2023-12-28 16:59:01,762] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - ngoanh91thangnhat@gmail.com
-[2023-12-28 17:01:00,878] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2023-12-28T17:01:00.878424400
-[2023-12-28 17:01:00,880] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-29T16:06:10
-[2023-12-28 17:01:01,067] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - ngoanh91thangnhat@gmail.com
-[2023-12-28 17:01:38,602] http-nio-8082-exec-7 com.bt1.qltv1.util.AuthenticationEventListener 27 INFO   - login success
-[2023-12-28 17:01:38,605] http-nio-8082-exec-7 com.bt1.qltv1.util.AuthenticationEventListener 29 INFO   - true
-[2023-12-28 17:01:38,647] http-nio-8082-exec-7 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T17:01:38
-[2023-12-28 17:01:38,661] http-nio-8082-exec-7 com.bt1.qltv1.service.impl.SessionServiceImpl 28 INFO   - Save session: 2
-[2023-12-28 17:01:38,726] http-nio-8082-exec-7 com.bt1.qltv1.service.AuthService 84 INFO   - LoginResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxOTExMDE2M0BzdHVkZW50LmhjbXV0ZS5lZHUudm4iLCJleHAiOjE3MDM4NDQwOTgsImlhdCI6MTcwMzc1NzY5OCwianRpIjoiMmU0N2E2NmZkYjQ1NGY4NGFlZjVkODUyN2ExMjhlZGIifQ.kdBuwdJYDHI5-SsmZoCnvKucZgjJ9oSrXpkqViRD3KU, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxOTExMDE2M0BzdHVkZW50LmhjbXV0ZS5lZHUudm4iLCJleHAiOjE3MDQzNjI0OTgsImlhdCI6MTcwMzc1NzY5OCwianRpIjoiMmU0N2E2NmZkYjQ1NGY4NGFlZjVkODUyN2ExMjhlZGIifQ.qtSoz1GP1oGjt6wL1AlcG5FRqfHt3wxuaaymX2iKaMM, id=2, username=19110163@student.hcmute.edu.vn, role=[ROLE_USER])
+[2024-01-03 09:17:14,593] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T09:17:14.592813900
+[2024-01-03 09:17:14,602] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-05T15:40:32
+[2024-01-03 09:17:14,609] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-05T15:40:32
+[2024-01-03 09:17:14,926] http-nio-8082-exec-3 com.bt1.qltv1.service.AuthService 126 INFO   - access token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJleHAiOjE3MDQzMzQ2MzQsImlhdCI6MTcwNDI0ODIzNCwianRpIjoiYzdkM2U4MTI2MzMzNDQ5ZWI4YjM1ZmQ1ZDJlZjFhNDEifQ.MwxfH3C3keLfGVp8DpHuL67j8MB4yHt3sBbv9GIJo-I
+[2024-01-03 09:17:14,929] http-nio-8082-exec-3 com.bt1.qltv1.service.AuthService 132 INFO   - RefreshTokenResponse: RefreshTokenResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJleHAiOjE3MDQzMzQ2MzQsImlhdCI6MTcwNDI0ODIzNCwianRpIjoiYzdkM2U4MTI2MzMzNDQ5ZWI4YjM1ZmQ1ZDJlZjFhNDEifQ.MwxfH3C3keLfGVp8DpHuL67j8MB4yHt3sBbv9GIJo-I, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBnbWFpbC5jb20iLCJleHAiOjE3MDQ0NDQwMzIsImlhdCI6MTcwMzgzOTIzMiwianRpIjoiYzdkM2U4MTI2MzMzNDQ5ZWI4YjM1ZmQ1ZDJlZjFhNDEifQ.CaTmCAGtQOwbVU05n5Vf5cW4MDCzEqHo715of4GYvqE)
+[2024-01-03 09:17:33,606] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T09:17:33.606446700
+[2024-01-03 09:17:33,608] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 09:20:37,977] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T09:20:37.976589500
+[2024-01-03 09:20:37,985] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 09:20:39,002] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 09:37:28,433] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T09:37:28.432686200
+[2024-01-03 09:37:28,444] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 09:39:39,983] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T09:39:39.979185100
+[2024-01-03 09:39:39,991] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 09:45:21,693] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T09:45:21.692299700
+[2024-01-03 09:45:21,704] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 09:48:57,206] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T09:48:57.204440400
+[2024-01-03 09:48:57,359] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 10:01:12,540] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T10:01:12.539694
+[2024-01-03 10:01:12,551] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 10:01:13,617] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 10:11:54,130] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T10:11:54.130366100
+[2024-01-03 10:11:54,142] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 10:11:54,506] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 11:30:08,978] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T11:30:08.978818
+[2024-01-03 11:30:08,993] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 11:30:29,796] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T11:30:29.796500
+[2024-01-03 11:30:29,800] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 11:32:25,998] http-nio-8082-exec-7 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T11:32:25.998413900
+[2024-01-03 11:32:26,002] http-nio-8082-exec-7 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 11:34:16,242] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T11:34:16.241917700
+[2024-01-03 11:34:16,251] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 11:35:16,001] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T11:35:15.997931900
+[2024-01-03 11:35:16,017] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 11:56:24,810] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T11:56:24.809906700
+[2024-01-03 11:56:25,147] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 11:56:25,936] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 11:56:26,382] http-nio-8082-exec-2 com.bt1.qltv1.validation.PhoneValidator 33 ERROR  - The string supplied did not seem to be a phone number.
+[2024-01-03 11:56:26,490] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 157 INFO   - Import user by csv file done!
+[2024-01-03 13:42:14,570] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T13:42:14.569982400
+[2024-01-03 13:42:14,608] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 13:42:15,404] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 13:42:15,703] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 13:42:15,764] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.UserServiceImpl 157 INFO   - Import user by csv file done!
+[2024-01-03 15:51:52,670] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T15:51:52.669090800
+[2024-01-03 15:51:52,703] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 15:52:27,568] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T15:52:27.568393200
+[2024-01-03 15:52:27,570] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 15:58:01,307] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T15:58:01.306568800
+[2024-01-03 15:58:01,315] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 15:58:26,426] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T15:58:26.426420500
+[2024-01-03 15:58:26,429] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 15:58:33,954] http-nio-8082-exec-6 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T15:58:33.954423900
+[2024-01-03 15:58:33,957] http-nio-8082-exec-6 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 16:00:04,761] http-nio-8082-exec-8 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T16:00:04.761900700
+[2024-01-03 16:00:04,763] http-nio-8082-exec-8 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 16:02:00,107] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T16:02:00.106023100
+[2024-01-03 16:02:00,109] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 16:02:06,486] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T16:02:06.486967400
+[2024-01-03 16:02:06,490] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 16:02:17,003] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T16:02:17.003079800
+[2024-01-03 16:02:17,006] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 16:02:25,823] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T16:02:25.823654900
+[2024-01-03 16:02:25,854] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 16:03:49,062] http-nio-8082-exec-7 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T16:03:49.062348400
+[2024-01-03 16:03:49,065] http-nio-8082-exec-7 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 16:04:03,810] http-nio-8082-exec-8 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T16:04:03.810376100
+[2024-01-03 16:04:03,812] http-nio-8082-exec-8 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:08:55,506] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:08:55.505148800
+[2024-01-03 17:08:55,532] http-nio-8082-exec-1 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:08:56,207] http-nio-8082-exec-1 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:09:19,540] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:09:19.540619800
+[2024-01-03 17:09:19,543] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:09:19,560] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:09:28,588] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:09:28.588440500
+[2024-01-03 17:09:28,590] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:09:28,604] http-nio-8082-exec-4 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:10:07,710] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:10:07.710133100
+[2024-01-03 17:10:07,713] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:10:07,770] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:27:37,402] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:27:37.400817400
+[2024-01-03 17:27:37,418] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:27:38,165] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:27:51,810] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:27:51.810377400
+[2024-01-03 17:27:51,813] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:27:51,839] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:28:01,289] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:28:01.289609
+[2024-01-03 17:28:01,291] http-nio-8082-exec-4 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:28:01,302] http-nio-8082-exec-4 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:28:41,382] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:28:41.382769200
+[2024-01-03 17:28:41,385] http-nio-8082-exec-5 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:28:41,417] http-nio-8082-exec-5 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com
+[2024-01-03 17:31:29,580] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 61 INFO   - now 2024-01-03T17:31:29.579395600
+[2024-01-03 17:31:29,594] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2024-01-04T09:17:14
+[2024-01-03 17:31:30,968] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - admin@gmail.com

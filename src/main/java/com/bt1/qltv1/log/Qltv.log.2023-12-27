@@ -1,0 +1,10 @@
+[2023-12-27 15:43:56,521] http-nio-8082-exec-3 com.bt1.qltv1.service.RegisterService 64 INFO   - Optional[BaseEntity(createdDate=2023-12-17T19:22:50, modifiedDate=2023-12-17T19:22:52, createdBy=null, modifiedBy=null)]
+[2023-12-27 15:52:08,876] http-nio-8082-exec-1 com.bt1.qltv1.service.RegisterService 54 INFO   - Optional[BaseEntity(createdDate=2023-12-17T19:22:50, modifiedDate=2023-12-17T19:22:52, createdBy=null, modifiedBy=null)]
+[2023-12-27 17:41:33,167] http-nio-8082-exec-3 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-27T17:56:33
+[2023-12-27 17:41:39,240] http-nio-8082-exec-3 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
+[2023-12-27 17:44:29,430] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-27T17:59:29
+[2023-12-27 17:44:29,542] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
+[2023-12-27 17:45:36,281] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-27T18:00:36
+[2023-12-27 17:47:38,235] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser
+[2023-12-27 17:48:44,325] http-nio-8082-exec-2 com.bt1.qltv1.util.JwtUtil 44 INFO   - expired date: 2023-12-27T18:03:44
+[2023-12-27 17:48:49,716] http-nio-8082-exec-2 com.bt1.qltv1.service.impl.AuditorAwareImpl 14 INFO   - anonymousUser

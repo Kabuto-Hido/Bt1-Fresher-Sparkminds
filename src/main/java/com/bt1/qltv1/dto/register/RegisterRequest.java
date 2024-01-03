@@ -25,7 +25,7 @@ public class RegisterRequest extends BaseEntity {
     @Phone
     private String phone;
 
-//  Min 1 uppercase letter.
+    //  Min 1 uppercase letter.
 //  Min 1 special character.
 //  Min 1 number.
 //  Min 8 characters.
