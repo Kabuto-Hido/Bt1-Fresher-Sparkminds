@@ -4,6 +4,7 @@ import com.bt1.qltv1.util.Global;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.ISBN;
 
 import javax.persistence.*;
 
@@ -20,6 +21,7 @@ public class Book extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ISBN
     @Column(name = "isbn", unique = true)
     private String isbn;
 

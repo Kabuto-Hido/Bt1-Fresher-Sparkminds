@@ -4,6 +4,7 @@ import com.bt1.qltv1.criteria.BookCriteria;
 import com.bt1.qltv1.dto.ListOutputResult;
 import com.bt1.qltv1.dto.book.BookRequest;
 import com.bt1.qltv1.dto.book.BookResponse;
+import com.bt1.qltv1.dto.book.UploadImageResponse;
 import com.bt1.qltv1.entity.Author;
 import com.bt1.qltv1.entity.Book;
 import com.bt1.qltv1.entity.Genre;
@@ -22,9 +23,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Log4j
@@ -122,8 +125,15 @@ public class BookServiceImpl implements BookService {
             book.setAvailable(bookRequest.isAvailable());
             book.setPrice(bookRequest.getPrice());
             book.setLoanFee(bookRequest.getLoanFee());
+            book.setImage(bookRequest.getImage());
         }
         else {
+            Optional<Book> bookByIsbn = bookRepository.findByIsbn(bookRequest.getIsbn());
+            if(bookByIsbn.isPresent()){
+                throw new BadRequest("Isbn code duplicate, Please retype!",
+                        "book.isbn.isbn-existed");
+            }
+
             book = BookMapper.toEntity(bookRequest);
         }
         book.setAuthorId(author);
@@ -132,5 +142,19 @@ public class BookServiceImpl implements BookService {
         book = bookRepository.save(book);
 
         return BookMapper.tobBookResponse(book);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        Book bookDeleted = bookRepository.findById(id).orElseThrow(()->
+                new NotFoundException("Not found book with id " + id, "book.delete.id-not-exist"));
+
+        bookDeleted.setAvailable(false);
+        bookRepository.save(bookDeleted);
+    }
+
+    @Override
+    public UploadImageResponse uploadImage(long id, MultipartFile image) {
+        return null;
     }
 }

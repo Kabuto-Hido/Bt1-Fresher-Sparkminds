@@ -5,17 +5,20 @@ import com.bt1.qltv1.dto.book.BookRequest;
 import com.bt1.qltv1.dto.book.BookResponse;
 import com.bt1.qltv1.dto.genre.GenreRequest;
 import com.bt1.qltv1.entity.Book;
+import com.bt1.qltv1.util.Global;
 
 public class BookMapper {
     public static Book toEntity(BookRequest request){
+        if (request.getImage() == null) {
+            request.setImage(Global.DEFAULT_IMAGE);
+        }
         return Book.builder()
                 .isbn(request.getIsbn())
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .quantity(request.getQuantity())
-                .available(request.isAvailable())
-                .image(request.getImage())
                 .price(request.getPrice())
+                .image(request.getImage())
                 .loanFee(request.getLoanFee()).build();
     }
     public static BookResponse tobBookResponse(Book book){

@@ -4,6 +4,7 @@ import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.dto.user.UserDTO;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
+import com.bt1.qltv1.util.Global;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,14 @@ import java.util.stream.Collectors;
 @Component
 public class UserMapper {
     public static User toEntity (UserDTO userDTO){
+        if(userDTO.getAvatar()==null){
+            userDTO.setAvatar(Global.DEFAULT_AVATAR);
+        }
         return User.builder()
                 .fullName(userDTO.getFullname())
                 .phone(userDTO.getPhone())
                 .email(userDTO.getEmail())
+                .avatar(userDTO.getAvatar())
                 .build();
     }
 

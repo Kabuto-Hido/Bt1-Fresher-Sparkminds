@@ -56,7 +56,7 @@ public class UserManagementController {
     }
 
     @PostMapping("/users/upload-csv")
-    public ResponseEntity<SuccessResponseDTO> uploadFile(@RequestParam(value = "file") MultipartFile file) {
+    public ResponseEntity<SuccessResponseDTO> uploadFile(@RequestParam MultipartFile file) {
         userService.importUserByCsv(file);
         return ResponseEntity.ok(new SuccessResponseDTO(
                 HttpStatus.OK,

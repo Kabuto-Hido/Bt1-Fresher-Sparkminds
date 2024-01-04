@@ -23,7 +23,7 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
     private StringFilter phone;
     private StringFilter email;
     private StringFilter role;
-    //private RangeFilter<UserStatus> status;
+//    private StringFilter status;
     private BooleanFilter mfaEnabled;
     private BooleanFilter verifyMail;
     private Boolean distinct;
@@ -36,7 +36,7 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
         this.role = other.role == null ? null : other.role.copy();
         this.verifyMail = other.verifyMail == null ? null : other.verifyMail.copy();
         this.mfaEnabled = other.mfaEnabled == null ? null : other.mfaEnabled.copy();
-        //this.status = other.status == null ? null : other.status.copy();
+//        this.status = other.status == null ? null : other.status.copy();
         this.distinct = other.distinct;
     }
 
@@ -89,9 +89,9 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
         return mfaEnabled;
     }
 
-//    public RangeFilter<UserStatus> status() {
+//    public StringFilter status() {
 //        if (status == null) {
-//            status = new RangeFilter<>();
+//            status = new StringFilter();
 //        }
 //        return status;
 //    }

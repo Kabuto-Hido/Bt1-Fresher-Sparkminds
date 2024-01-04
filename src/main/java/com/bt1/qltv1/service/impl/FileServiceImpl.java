@@ -22,12 +22,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<String[]> readCsvFileWithoutHeader(MultipartFile file) throws IOException, CsvException {
         if (!isCsvFormat(file.getContentType())){
-            throw new BadRequest("Just support csv file!!","file.type.invalid");
-        }
-
-        if (file.getSize() > Global.FILE_SIZE){
-            throw new BadRequest("File size exceeds the limit of 5MB!!","file.size.invalid");
-
+            throw new BadRequest("Just support CSV file!!","file.type.invalid");
         }
         try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
             // Skip the first row (header)
