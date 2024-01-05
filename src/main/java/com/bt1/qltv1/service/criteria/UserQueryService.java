@@ -61,9 +61,9 @@ public class UserQueryService extends QueryService<User> {
             if(criteria.getMfaEnabled() != null){
                 specification = specification.and(buildSpecification(criteria.getMfaEnabled(),User_.mfaEnabled));
             }
-//            if(criteria.getStatus() != null){
-//                specification = specification.and(buildStringSpecification(criteria.getStatus(), User_.status));
-//            }
+            if(criteria.getStatus() != null){
+                specification = specification.and(buildSpecification(criteria.getStatus(), User_.status));
+            }
             if (criteria.getRole() != null) {
                 specification = specification.and(
                                 buildSpecification(criteria.getRole(),

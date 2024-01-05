@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Service
 public interface SessionService {
-    void saveSession(Session session, long userId);
+    void saveSession(Session session, long accId);
     Session findByJti(String jti);
     boolean checkIsBlockSession(String jti);
     boolean checkIsRightRefreshToken(String jti, LocalDateTime time);

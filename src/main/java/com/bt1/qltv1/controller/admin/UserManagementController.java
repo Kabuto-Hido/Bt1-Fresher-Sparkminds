@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +33,12 @@ public class UserManagementController {
                                                        @RequestParam(required = false,
                                                                defaultValue = Global.DEFAULT_SORT_BY) String sortBy) {
         return ResponseEntity.ok(userService.findAllUser(userCriteria, page, limit, order, sortBy));
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<ProfileResponse> getUserById(@NotNull(message = "Id can be not null")
+                                                   @PathVariable long id){
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @PostMapping("/users")

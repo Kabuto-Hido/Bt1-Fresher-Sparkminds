@@ -49,12 +49,12 @@ public class Book extends BaseEntity{
     @Column(name = "loan_fee")
     private Double loanFee;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Author authorId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "genre_id", referencedColumnName = "id")
     private Genre genreId;

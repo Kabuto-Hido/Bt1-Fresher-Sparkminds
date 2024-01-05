@@ -21,6 +21,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findByJti(String jti);
     @Modifying
     @Transactional
-    @Query("update Session s set s.status = 'BLOCK' where s.userId.id = ?1")
-    void blockAllSessionByUserId(long userId);
+    @Query("update Session s set s.status = 'BLOCK' where s.accountId.id = ?1")
+    void blockAllSessionByAccId(long accId);
 }

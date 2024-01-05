@@ -4,9 +4,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="createTableUsersRoles" author="liquibase">
-        <createTable tableName="users_roles">
-            <column name="user_id" type="bigint">
+    <changeSet id="createTableAccountsRoles" author="liquibase">
+        <createTable tableName="accounts_roles">
+            <column name="acc_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="role_id" type="bigint">
@@ -14,18 +14,18 @@
             </column>
         </createTable>
 
-        <addPrimaryKey columnNames="user_id, role_id" tableName="users_roles"/>
+        <addPrimaryKey columnNames="acc_id, role_id" tableName="accounts_roles"/>
 
         <addForeignKeyConstraint baseColumnNames="role_id"
-                                 baseTableName="users_roles"
+                                 baseTableName="accounts_roles"
                                  constraintName="fk_role_id"
                                  referencedColumnNames="id"
                                  referencedTableName="role"/>
 
-        <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="users_roles"
-                                 constraintName="fk_user_id"
+        <addForeignKeyConstraint baseColumnNames="acc_id"
+                                 baseTableName="accounts_roles"
+                                 constraintName="fk_acc_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="user"/>
+                                 referencedTableName="account"/>
     </changeSet>
 </databaseChangeLog>

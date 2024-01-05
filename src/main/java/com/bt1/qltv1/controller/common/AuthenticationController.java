@@ -7,6 +7,7 @@ import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
 import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
 import com.bt1.qltv1.dto.mfa.MfaResponse;
 import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
+import com.bt1.qltv1.service.AccountService;
 import com.bt1.qltv1.service.AuthService;
 import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.UserService;
@@ -24,7 +25,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/common")
 public class AuthenticationController {
     private final AuthService authService;
-    private final UserService userService;
+    private final AccountService accountService;
     private final MfaService mfaService;
 
     @PostMapping("/login")
@@ -46,7 +47,7 @@ public class AuthenticationController {
 
     @PostMapping("/disable-mfa")
     public ResponseEntity<SuccessResponseDTO> disableMfa(){
-        userService.disableMfa();
+        accountService.disableMfa();
         return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
                 "Disable MFA success!"));
     }
@@ -54,7 +55,7 @@ public class AuthenticationController {
     @PostMapping("/enable-mfa")
     public ResponseEntity<SuccessResponseDTO> verifyMfaCode(@Valid @RequestBody
                                                                 VerifyMfaRequest verifyMfaRequest){
-        userService.enableMfa(verifyMfaRequest);
+        accountService.enableMfa(verifyMfaRequest);
         return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
                 "Enable MFA success!"));
     }

@@ -14,9 +14,9 @@
             </column>
             <column name="expired_date" type="datetime"/>
             <column name="status" type="enum('ACTIVE', 'BLOCK')"/>
-            <column name="user_id" type="bigint">
-                <constraints nullable="true" foreignKeyName="fk_session_user"
-                             referencedColumnNames="id" referencedTableName="user"/>
+            <column name="account_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_session_account"
+                             referencedColumnNames="id" referencedTableName="account"/>
             </column>
         </createTable>
     </changeSet>

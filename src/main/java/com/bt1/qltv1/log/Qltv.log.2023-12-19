@@ -1,4 +1,0 @@
-[2023-12-19 16:59:23,922] http-nio-8082-exec-1 com.bt1.qltv1.controller.common.AuthenticationController 42 INFO   - Login request: LoginRequest(email=a@gmail.com, password=123456789)
-[2023-12-19 16:59:24,708] http-nio-8082-exec-1 com.bt1.qltv1.util.AuthenticationEventListener 24 INFO   - login success
-[2023-12-19 16:59:24,966] http-nio-8082-exec-1 com.bt1.qltv1.controller.common.AuthenticationController 67 INFO   - JTi: null
-[2023-12-19 16:59:24,994] http-nio-8082-exec-1 com.bt1.qltv1.controller.common.AuthenticationController 74 INFO   - Login response : LoginResponse(accessToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzA2NjM2NCwiaWF0IjoxNzAyOTc5OTY0fQ.GC7FCbG6LX2Kwb6ZOxWqt6YmFBjq2vcHojkBuVe5WDw, refreshToken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhQGdtYWlsLmNvbSIsImV4cCI6MTcwMzU4NDc2NCwiaWF0IjoxNzAyOTc5OTY0fQ.V7ATMB5IDsrrHbNOovuzGQHPlGG_5C844tKek1FtCnE, id=3, username=a@gmail.com, role=[ROLE_USER])

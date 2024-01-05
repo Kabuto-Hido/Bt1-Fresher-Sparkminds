@@ -36,10 +36,10 @@ public class Session {
     @Enumerated(EnumType.STRING)
     private SessionStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
-    private User userId;
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    private Account accountId;
 
     public boolean isActive(){
         return this.status.equals(SessionStatus.ACTIVE);

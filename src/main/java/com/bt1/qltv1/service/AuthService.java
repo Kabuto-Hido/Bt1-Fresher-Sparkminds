@@ -4,11 +4,13 @@ import com.bt1.qltv1.dto.auth.LoginRequest;
 import com.bt1.qltv1.dto.auth.LoginResponse;
 import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
 import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
+import com.bt1.qltv1.entity.Account;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.enumeration.SessionStatus;
 import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.MfaException;
+import com.bt1.qltv1.exception.TokenException;
 import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.util.JwtUtil;
@@ -36,6 +38,7 @@ public class AuthService {
     private final MfaService mfaService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
+    private final AccountService accountService;
 
     public LoginResponse login(LoginRequest loginRequest){
         //log login request
@@ -52,10 +55,11 @@ public class AuthService {
                 loadUserByUsername(loginRequest.getEmail());
 
         //check valid email
-        User user = userService.findFirstByEmail(loginRequest.getEmail());
+        Account account = accountService.findFirstByEmail(loginRequest.getEmail());
+//        User user = userService.findFirstByEmail(loginRequest.getEmail());
 
         //check is account enable MFA
-        if(user.isMfaEnabled() && (!mfaService.verifyOtp(user.getSecret(),
+        if(account.isMfaEnabled() && (!mfaService.verifyOtp(account.getSecret(),
                 loginRequest.getCode()))){
             throw new MfaException("Invalid MFA code","mfa.code.invalid");
         }
@@ -74,11 +78,11 @@ public class AuthService {
         newSession.setStatus(SessionStatus.ACTIVE);
 
         //save session to db
-        sessionService.saveSession(newSession, user.getId());
+        sessionService.saveSession(newSession, account.getId());
 
         LoginResponse loginResponse = LoginResponse
                 .builder().accessToken(accessToken).refreshToken(refreshToken)
-                .username(loginRequest.getEmail()).id(user.getId())
+                .username(loginRequest.getEmail()).id(account.getId())
                 .role((Set<GrantedAuthority>) userDetails.getAuthorities()).build();
 
         log.info(loginResponse);
@@ -100,26 +104,27 @@ public class AuthService {
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request){
         String refreshToken = request.getRefreshToken();
-        String email;
-
-        try {
-            email = jwtUtil.extractUsername(refreshToken);
-        } catch (JwtException ex) {
-            throw new JwtException(ex.getMessage());
-        }
-
-        if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(refreshToken))) {
-            throw new JwtException("Your token is expired. Please login again.");
-        }
-
         String jti = jwtUtil.extractJTi(refreshToken);
         LocalDateTime expiredTime = jwtUtil.extractExpiration(refreshToken);
 
+        if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(refreshToken))) {
+            sessionService.blockSession(jti);
+            throw new TokenException("Your token is expired. Please login again.",
+                    "refresh-token.expired");
+        }
+
+        String email;
+        try {
+            email = jwtUtil.extractUsername(refreshToken);
+        } catch (JwtException ex) {
+            throw new TokenException(ex.getMessage(),"token.invalid");
+        }
+
         if(!sessionService.checkIsRightRefreshToken(jti, expiredTime)){
-            throw new JwtException("Please use right refresh token");
+            throw new TokenException("Please use right refresh token","refresh-token.invalid");
         }
         if (sessionService.checkIsBlockSession(jti)) {
-            throw new JwtException("Your refresh token can not use any more.");
+            throw new TokenException("Your refresh token can not use any more.","refresh-token.invalid");
         }
         //generate new access token
         String accessToken = jwtUtil.generateToken(email, jti);

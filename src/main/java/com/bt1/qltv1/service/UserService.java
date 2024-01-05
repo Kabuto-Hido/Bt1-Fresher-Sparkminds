@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 public interface UserService {
+    ProfileResponse findById(long id);
     ListOutputResult findAllUser(UserCriteria userCriteria, String page, String limit,
                                  String order, String sortBy);
 
@@ -24,20 +25,6 @@ public interface UserService {
     void deleteUser(long id);
 
     User findFirstByEmail(String email);
-
-    void increaseFailedAttempts(String email, int failedAttempts);
-
-    void lockAccount(User user);
-
-    void unlockAccount(User user);
-
-    String getTimeRemaining(User user);
-
-    void resetFailedAttempts(String email);
-
-    void enableMfa(VerifyMfaRequest request);
-
-    void disableMfa();
 
     void updateAvatar();
 

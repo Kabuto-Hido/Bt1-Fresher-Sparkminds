@@ -1,5 +1,6 @@
 package com.bt1.qltv1.criteria;
 
+import com.bt1.qltv1.criteria.filter.UserStatusFilter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,13 +18,15 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class UserCriteria extends Throwable implements Serializable, Criteria {
+
     private LongFilter id;
     private StringFilter fullName;
     private StringFilter phone;
     private StringFilter email;
     private StringFilter role;
-//    private StringFilter status;
+    private UserStatusFilter status;
     private BooleanFilter mfaEnabled;
     private BooleanFilter verifyMail;
     private Boolean distinct;
@@ -36,7 +39,7 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
         this.role = other.role == null ? null : other.role.copy();
         this.verifyMail = other.verifyMail == null ? null : other.verifyMail.copy();
         this.mfaEnabled = other.mfaEnabled == null ? null : other.mfaEnabled.copy();
-//        this.status = other.status == null ? null : other.status.copy();
+        this.status = other.status == null ? null : other.status.copy();
         this.distinct = other.distinct;
     }
 
@@ -89,14 +92,6 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
         return mfaEnabled;
     }
 
-//    public StringFilter status() {
-//        if (status == null) {
-//            status = new StringFilter();
-//        }
-//        return status;
-//    }
-
-
     @Override
     public Criteria copy() {
         return new UserCriteria(this);
@@ -110,7 +105,7 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
                 && Objects.equals(getFullName(), that.getFullName())
                 && Objects.equals(getPhone(), that.getPhone())
                 && Objects.equals(getEmail(), that.getEmail())
-//                && Objects.equals(getStatus(), that.getStatus())
+                && Objects.equals(getStatus(), that.getStatus())
                 && Objects.equals(getRole(), that.getRole())
                 && Objects.equals(getMfaEnabled(), that.getMfaEnabled())
                 && Objects.equals(getVerifyMail(), that.getVerifyMail())
@@ -120,7 +115,7 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getFullName(), getPhone(),
-                getEmail(), /*getStatus(),*/ getMfaEnabled(), getVerifyMail(), getRole(),
+                getEmail(), getStatus(), getMfaEnabled(), getVerifyMail(), getRole(),
                 getDistinct());
     }
 }

@@ -23,7 +23,7 @@ public class Author extends BaseEntity{
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "authorId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "authorId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Book> listBook = new ArrayList<>();
 }

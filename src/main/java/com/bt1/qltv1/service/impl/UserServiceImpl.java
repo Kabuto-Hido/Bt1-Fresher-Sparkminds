@@ -108,6 +108,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public ProfileResponse findById(long id) {
+        User userById = userRepository.findById(id).orElseThrow(()->
+                new NotFoundException("Not found user with id "+id,"find-user.id.not-exist"));
+        return UserMapper.toProfileDto(userById);
+    }
+
+    @Override
     public ListOutputResult findAllUser(UserCriteria userCriteria, String page, String limit,
                                              String order, String sortBy) {
         Pageable pageable = preparePaging(page, limit, order, sortBy);
@@ -212,99 +219,6 @@ public class UserServiceImpl implements UserService {
     public User findFirstByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                 new NotFoundException("Wrong email!!","user.email.not-exist"));
-    }
-
-    @Override
-    public void increaseFailedAttempts(String email, int failedAttempt) {
-        log.info("login fail attempts "+ (failedAttempt+1));
-        userRepository.updateFailedAttempts(email, (failedAttempt + 1));
-    }
-
-    @Override
-    public void lockAccount(User user) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime lockTime = now.plusMinutes((Global.LOCK_TIME_DURATION / 60000));
-        user.setLockTime(lockTime);
-        user.setStatus(UserStatus.BLOCK);
-        log.info("lock time "+ lockTime);
-        userRepository.save(user);
-
-        log.info("lock account:" +user.getEmail() + " in time "+user.getLockTime());
-    }
-
-    //@Transactional(readOnly = true)
-    @Override
-    public void unlockAccount(User user) {
-        user.setStatus(UserStatus.ACTIVE);
-        user.setLockTime(null);
-        user.setFailedAttempt(0);
-
-        userRepository.save(user);
-        log.info("User after unlock: "+ user);
-    }
-
-    @Override
-    public String getTimeRemaining(User user) {
-        LocalDateTime d1 = user.getLockTime();
-
-        if(d1 == null){
-            return null;
-        }
-
-        LocalDateTime d2 = LocalDateTime.now();
-
-        Duration duration = Duration.between(d2, d1);
-        long minuteRemaining = duration.getSeconds() / 60;
-        long secondRemaining = duration.getSeconds() % 60;
-        return String.format("%sm %ss", minuteRemaining, secondRemaining);
-    }
-
-    @Override
-    public void resetFailedAttempts(String email) {
-        userRepository.updateFailedAttempts(email, 0);
-    }
-
-    @Override
-    public void enableMfa(VerifyMfaRequest request) {
-        try {
-            String email = UserDetailsServiceImpl.getEmailLoggedIn();
-
-            if(!mfaService.verifyOtp(request.getSecret(),request.getCode())){
-                throw new MfaException("Invalid MFA code","mfa.code.invalid");
-            }
-
-            User user = findFirstByEmail(email);
-
-            user.setMfaEnabled(true);
-            user.setSecret(request.getSecret());
-
-            userRepository.save(user);
-        }catch (Exception ex){
-            log.error(ex.getMessage());
-        }
-        finally {
-            log.info("Enable MFA success");
-        }
-    }
-
-    @Transactional
-    @Override
-    public void disableMfa() {
-        try {
-            String email = UserDetailsServiceImpl.getEmailLoggedIn();
-            User user = findFirstByEmail(email);
-
-            user.setMfaEnabled(false);
-            user.setSecret(null);
-
-            userRepository.save(user);
-        }catch (Exception ex){
-            log.error(ex.getMessage());
-        }
-        finally {
-            log.info("Disable MFA success");
-        }
-
     }
 
     @Override
