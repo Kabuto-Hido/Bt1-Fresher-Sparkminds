@@ -1,24 +1,32 @@
 package com.bt1.qltv1.service;
 
+import com.bt1.qltv1.criteria.UserCriteria;
+import com.bt1.qltv1.dto.ListOutputResult;
 import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.dto.user.ProfileResponse;
+import com.bt1.qltv1.dto.user.UserDTO;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.enumeration.ActivateMailType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
 public interface UserService {
-    List<ProfileResponse> findAllUser();
+    ProfileResponse findById(long id);
+
+    ListOutputResult findAllUser(UserCriteria userCriteria, Pageable pageable);
+
+    void importUserByCsv(MultipartFile file);
+
+    ProfileResponse save(UserDTO dto);
+
+    void deleteUser(long id);
+
     User findFirstByEmail(String email);
-    void increaseFailedAttempts(String email, int failedAttempts);
-    void lockAccount(User user);
-    void unlockAccount(User user);
-    String getTimeRemaining(User user);
-    void resetFailedAttempts(String email);
-    void enableMfa(VerifyMfaRequest request);
-    void disableMfa();
+
     void updateAvatar();
 
 }

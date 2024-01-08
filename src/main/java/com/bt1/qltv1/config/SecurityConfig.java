@@ -3,6 +3,7 @@ package com.bt1.qltv1.config;
 import com.bt1.qltv1.filter.JwtFilter;
 import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,16 +54,16 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults())
                 .csrf()
                 .disable().authorizeRequests()
-                .antMatchers("/api/v1/", "/api/v1/common/register", "/api/v1/common/login",
+                .antMatchers("/api/v1", "/api/v1/common/register", "/api/v1/common/login",
                         "/api/v1/common/refresh-token","/api/v1/common/confirm-email/**",
                         "/api/v1/common/send-email/activate","/api/v1/common/verify-otp",
                         "/api/v1/common/reset-password",
+                        "/swagger-ui.html",
                         "/v2/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",
                         "/configuration/ui",
                         "/configuration/security",
-                        "/swagger-ui.html",
                         "/webjars/**")
                 .permitAll()
                 .antMatchers("/api/v1/common/generate-mfa",

@@ -1,5 +1,6 @@
 package com.bt1.qltv1.util;
 
+import com.bt1.qltv1.entity.Account;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,10 +17,10 @@ public class ApplicationUser implements UserDetails {
     public ApplicationUser() {
     }
 
-    public ApplicationUser(User user) {
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        Set<Role> roleSet  = user.getRoleSet();
+    public ApplicationUser(Account account) {
+        this.email = account.getEmail();
+        this.password = account.getPassword();
+        Set<Role> roleSet  = account.getRoleSet();
 
         List<Role> roleList = new ArrayList<>(roleSet);
         Set<GrantedAuthority> role = new HashSet<>();

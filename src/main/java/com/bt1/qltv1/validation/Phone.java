@@ -5,7 +5,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Constraint(validatedBy = PhoneValidator.class)
-@Target({ ElementType.FIELD })
+@Target({ ElementType.FIELD ,ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Phone {

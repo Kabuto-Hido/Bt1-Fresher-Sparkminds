@@ -3,11 +3,13 @@ package com.bt1.qltv1.service;
 import com.bt1.qltv1.dto.register.OtpVerifyRequest;
 import com.bt1.qltv1.dto.register.RegisterRequest;
 import com.bt1.qltv1.dto.register.SendMailRequest;
+import com.bt1.qltv1.entity.Account;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.NotFoundException;
+import com.bt1.qltv1.repository.AccountRepository;
 import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.util.Global;
@@ -31,6 +33,7 @@ public class RegisterService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
     private final SpringTemplateEngine templateEngine;
@@ -39,17 +42,19 @@ public class RegisterService {
     public void register(RegisterRequest registerRequest) {
         Optional<User> userByEmail = userRepository.findByEmail(registerRequest.getEmail());
         if (userByEmail.isPresent()) {
-            throw new BadRequest("Email duplicate, Please retype!", "user.email.email-existed");
+            throw new BadRequest("Email duplicate, Please retype!",
+                    "user.email.email-existed");
         }
 
-        userByEmail.ifPresent(user -> {
-            if (!user.getPhone().equals(registerRequest.getPhone())) {
-                throw new BadRequest("Phone duplicate, Please retype!", "user.phone.phone-existed");
-            }
-        });
+        Optional<User> userByPhone = userRepository.findByPhone(registerRequest.getPhone());
+        if (userByPhone.isPresent()) {
+            throw new BadRequest("Phone duplicate, Please retype!",
+                    "user.phone.phone-existed");
+        }
 
+        //get user role
         Optional<Role> roleUserOptional = roleRepository.findById(2L);
-        log.info(roleUserOptional);
+        log.debug(roleUserOptional);
         List<Role> roleUserList = new ArrayList<>();
         roleUserOptional.ifPresent(roleUserList::add);
         Set<Role> roleUserSet = new HashSet<>(roleUserList);
@@ -94,40 +99,41 @@ public class RegisterService {
             throw new BadRequest("Link expired", "user.verify-link.expired");
         }
         String email = jwtUtil.extractUsername(token);
-        Optional<User> userConfirm = userRepository.findFirstByEmailAndVerifyMail(email,
+        Optional<Account> accountConfirm = accountRepository.findFirstByEmailAndVerifyMail(email,
                 true);
-        if (userConfirm.isPresent()) {
+        if (accountConfirm.isPresent()) {
             throw new BadRequest("Email already verify mail",
                     "user.confirm.verify-mail");
         }
-        userRepository.activateAccount(email);
+        accountRepository.activateAccount(email);
     }
 
     public void verifyOtp(OtpVerifyRequest otpVerifyRequest){
-        User user = userRepository.findByEmail(otpVerifyRequest.getEmail()).orElseThrow(() ->
+        Account account = accountRepository.findByEmail(otpVerifyRequest.getEmail()).orElseThrow(() ->
                 new NotFoundException("Your email is not registered.", "user.email.not-exist"));
 
-        if(user.isVerifyMail()){
+        if(account.isVerifyMail()){
             throw new BadRequest("Email already verify mail", "user.already.verify-mail");
         }
 
         LocalDateTime now = LocalDateTime.now();
-        if(user.getOtpExpired().isBefore(now)){
+        if(account.getOtpExpired().isBefore(now)){
             throw new BadRequest("OTP expired", "user.verify-link.expired");
         }
 
-        if (!user.getOtp().equals(otpVerifyRequest.getOtp())){
+        if (!account.getOtp().equals(otpVerifyRequest.getOtp())){
             throw new BadRequest("Otp is invalid", "user.otp.invalid");
         }
 
-        userRepository.activateAccount(otpVerifyRequest.getEmail());
+        accountRepository.activateAccount(otpVerifyRequest.getEmail());
     }
 
     public void resendVerifyMail(SendMailRequest sendMailRequest) {
-        User user = userRepository.findByEmail(sendMailRequest.getEmail()).orElseThrow(() ->
+        Account account = accountRepository.findByEmail(sendMailRequest.getEmail()).orElseThrow(() ->
                 new NotFoundException("Your email is not registered.", "user.email.not-exist"));
+
         //check email is exist and is enabled verify email
-        if (user.isVerifyMail()) {
+        if (account.isVerifyMail()) {
             throw new BadRequest("Your account has been verify mail.",
                     "user.resend-mail.verify-mail");
         }
@@ -139,9 +145,9 @@ public class RegisterService {
 
         sendEmailToActivatedAccount(sendMailRequest.getEmail(), token, otp);
 
-        user.setOtp(otp);
-        user.setOtpExpired(verifyExpired);
-        userRepository.save(user);
+        account.setOtp(otp);
+        account.setOtpExpired(verifyExpired);
+        accountRepository.save(account);
 
     }
 

@@ -3,6 +3,7 @@ package com.bt1.qltv1.controller.common;
 import com.bt1.qltv1.dto.SuccessResponseDTO;
 import com.bt1.qltv1.dto.password.ChangePasswordRequest;
 import com.bt1.qltv1.dto.register.OtpVerifyRequest;
+import com.bt1.qltv1.dto.user.VerifySms;
 import com.bt1.qltv1.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,23 @@ public class ProfileController {
         profileService.changeEmail(newEmail);
         return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
                 "Send mail success! Please confirm your new email!"));
+    }
+
+    @PostMapping("user/change-phone")
+    public ResponseEntity<SuccessResponseDTO> changePhone(@RequestParam(name = "phone")
+                                                          @Email(message = "{user.phone.invalid}")
+                                                          String newPhone){
+        profileService.changePhone(newPhone);
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                "Send otp to your sms success!"));
+    }
+
+    @PostMapping("/user/new-phone/verify-sms-otp")
+    public ResponseEntity<SuccessResponseDTO> verifySms(@Valid @RequestBody
+                                                        VerifySms verifySms) {
+        profileService.verifyNewPhoneSms(verifySms);
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                "Change phone successful"));
     }
 
     @PostMapping("/user/new-email/verify-otp")

@@ -1,11 +1,13 @@
 package com.bt1.qltv1.service.impl;
 
+import com.bt1.qltv1.entity.Account;
 import com.bt1.qltv1.enumeration.SessionStatus;
 import com.bt1.qltv1.entity.Session;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.exception.AuthException;
 import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.NotFoundException;
+import com.bt1.qltv1.repository.AccountRepository;
 import com.bt1.qltv1.repository.SessionRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.SessionService;
@@ -22,14 +24,19 @@ import java.util.Optional;
 public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
     @Override
-    public void saveSession(Session session, long userId) {
-        log.info("Save session: "+userId);
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new NotFoundException("Not found user","user.email.not-exist"));
+    public void saveSession(Session session, long accId) {
+        log.info("Save session: "+accId);
+        Account account =  accountRepository.findById(accId).orElseThrow(() ->
+                new NotFoundException("Not found account!!","account.id.not-exist"));
 
-        session.setUserId(user);
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(()-> new NotFoundException("Not found user","user.email.not-exist"));
+
+        session.setAccountId(account);
+//        session.setUserId(user);
         sessionRepository.save(session);
     }
 
