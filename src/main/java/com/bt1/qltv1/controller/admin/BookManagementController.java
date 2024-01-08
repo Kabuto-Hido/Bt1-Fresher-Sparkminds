@@ -11,6 +11,9 @@ import com.bt1.qltv1.service.BookService;
 import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.validation.ValidImage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,14 +54,8 @@ public class BookManagementController {
 
     @GetMapping("/books")
     public ResponseEntity<ListOutputResult> getAllBook(BookCriteria bookCriteria,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = Global.DEFAULT_PAGE) String page,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = Global.DEFAULT_LIMIT) String limit,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = "desc") String order,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = Global.DEFAULT_SORT_BY) String sortBy) {
-        return ResponseEntity.ok(bookService.findAllBook(bookCriteria, page, limit, order, sortBy));
+                                                       @PageableDefault(sort = Global.DEFAULT_SORT_BY,
+                                                               direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(bookService.findAllBook(bookCriteria, pageable));
     }
 }

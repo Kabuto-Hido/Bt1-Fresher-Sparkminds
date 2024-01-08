@@ -1,8 +1,9 @@
 package com.bt1.qltv1.service.criteria;
 
 import com.bt1.qltv1.criteria.BookCriteria;
-import com.bt1.qltv1.entity.Book;
-import com.bt1.qltv1.entity.Book_;
+import com.bt1.qltv1.criteria.UserCriteria;
+import com.bt1.qltv1.entity.*;
+import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -13,6 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
+import javax.persistence.criteria.JoinType;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 @Service
 @Log4j
 @Transactional(readOnly = true)
@@ -22,7 +28,7 @@ public class BookQueryService extends QueryService<Book> {
 
     public Page<Book> findByCriteria(BookCriteria criteria, Pageable page) {
         log.debug("find by criteria : {}", criteria);
-        final Specification<Book> specification = createSpecification(criteria);
+        Specification<Book> specification = createSpecification(criteria);
         return bookRepository.findAll(specification, page);
     }
 
@@ -62,9 +68,46 @@ public class BookQueryService extends QueryService<Book> {
             if (criteria.getLoanFee() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getLoanFee(), Book_.loanFee));
             }
-        }
+            if (criteria.getAuthorId() != null) {
+                specification = specification.and(
+                        buildSpecification(criteria.getAuthorId(),
+                                root -> root.join(Book_.authorId, JoinType.LEFT).get(Author_.id))
+                );
+            }
+            if (criteria.getGenreId() != null) {
+                specification = specification.and(
+                        buildSpecification(criteria.getGenreId(),
+                                root -> root.join(Book_.genreId, JoinType.LEFT).get(Genre_.id))
+                );
+            }
+            if(criteria.getFromTime()!= null) {
+                try {
+                    LocalDateTime from = fromString(criteria.getFromTime());
+                    specification = specification.and((root, query, criteriaBuilder)
+                            -> criteriaBuilder.greaterThanOrEqualTo(root.get(BaseEntity_.createdDate),
+                            from));
+                }catch (DateTimeParseException ex){
+                   throw new BadRequest("Please enter right format of date ddMMyyyy HHmmss",
+                           "get-book.from-date.invalid");
+                }
+            }
 
+            if(criteria.getToTime()!= null) {
+                try {
+                    LocalDateTime to = fromString(criteria.getFromTime());
+                    specification = specification.and((root, query, criteriaBuilder)
+                            -> criteriaBuilder.lessThanOrEqualTo(root.get(BaseEntity_.createdDate),
+                            to));
+                }catch (DateTimeParseException ex){
+                    throw new BadRequest("Please enter right format of date ddMMyyyy HHmmss",
+                            "get-book.from-date.invalid");
+                }
+            }
+        }
         return specification;
     }
 
+    private LocalDateTime fromString(String dateTime) throws DateTimeParseException {
+        return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("ddMMyyyy HHmmss"));
+    }
 }

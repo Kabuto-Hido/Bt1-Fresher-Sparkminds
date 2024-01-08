@@ -13,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class BookCriteria extends Throwable implements Serializable, Criteria {
     private LongFilter id;
     private StringFilter isbn;
@@ -20,8 +21,12 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
     private StringFilter description;
     private IntegerFilter quantity;
     private BooleanFilter available;
-    private DoubleFilter price;
-    private DoubleFilter loanFee;
+    private BigDecimalFilter price;
+    private BigDecimalFilter loanFee;
+    private LongFilter authorId;
+    private LongFilter genreId;
+    private String fromTime;
+    private String toTime;
     private Boolean distinct;
 
     private BookCriteria(BookCriteria other){
@@ -33,6 +38,10 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
         this.price = other.price == null ? null : other.price.copy();
         this.loanFee = other.loanFee == null ? null : other.loanFee.copy();
         this.available = other.available == null ? null : other.available.copy();
+        this.authorId = other.authorId == null ? null : other.authorId.copy();
+        this.genreId = other.genreId == null ? null : other.genreId.copy();
+        this.fromTime = other.fromTime;
+        this.toTime = other.toTime;
         this.distinct = other.distinct;
     }
 
@@ -41,6 +50,20 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
             id = new LongFilter();
         }
         return id;
+    }
+
+    public LongFilter authorId() {
+        if (authorId == null) {
+            authorId = new LongFilter();
+        }
+        return authorId;
+    }
+
+    public LongFilter genreId() {
+        if (genreId == null) {
+            genreId = new LongFilter();
+        }
+        return genreId;
     }
 
     public StringFilter isbn() {
@@ -71,16 +94,16 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
         return quantity;
     }
 
-    public DoubleFilter price(){
+    public BigDecimalFilter price(){
         if (price == null){
-            price = new DoubleFilter();
+            price = new BigDecimalFilter();
         }
         return price;
     }
 
-    public DoubleFilter loanFee(){
+    public BigDecimalFilter loanFee(){
         if (loanFee == null){
-            loanFee = new DoubleFilter();
+            loanFee = new BigDecimalFilter();
         }
         return loanFee;
     }
@@ -100,20 +123,25 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof BookCriteria that)) return false;
-        return getAvailable() == that.getAvailable()
-                && Objects.equals(getId(), that.getId())
+        return Objects.equals(getId(), that.getId())
                 && Objects.equals(getIsbn(), that.getIsbn())
                 && Objects.equals(getTitle(), that.getTitle())
                 && Objects.equals(getDescription(), that.getDescription())
                 && Objects.equals(getQuantity(), that.getQuantity())
+                && Objects.equals(getAvailable(), that.getAvailable())
                 && Objects.equals(getPrice(), that.getPrice())
                 && Objects.equals(getLoanFee(), that.getLoanFee())
-                && Objects.equals(getDistinct(), that.getDistinct());
+                && Objects.equals(getAuthorId(), that.getAuthorId())
+                && Objects.equals(getGenreId(), that.getGenreId())
+                && Objects.equals(getDistinct(), that.getDistinct())
+                && Objects.equals(getFromTime(), that.getFromTime())
+                && Objects.equals(getToTime(), that.getToTime());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getIsbn(), getTitle(), getDescription(), getQuantity(),
-                getAvailable(), getPrice(), getLoanFee(), getDistinct());
+                getAvailable(), getPrice(), getLoanFee(), getAuthorId(), getGenreId(), getDistinct(),
+                getFromTime(), getToTime());
     }
 }

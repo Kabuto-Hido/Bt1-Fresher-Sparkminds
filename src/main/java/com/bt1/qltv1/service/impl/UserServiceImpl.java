@@ -2,20 +2,17 @@ package com.bt1.qltv1.service.impl;
 
 import com.bt1.qltv1.criteria.UserCriteria;
 import com.bt1.qltv1.dto.ListOutputResult;
-import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.dto.user.UserDTO;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.exception.BadRequest;
-import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.mapper.UserMapper;
 import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.FileService;
-import com.bt1.qltv1.service.MfaService;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.service.criteria.UserQueryService;
 import com.bt1.qltv1.util.ApplicationUser;
@@ -30,57 +27,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
-
 @Log4j
 @Component
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final MfaService mfaService;
     private final UserQueryService userQueryService;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
-
-    private Boolean isNumber(String s) {
-        try {
-            Long.parseLong(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private Boolean isValidNumber(String num) {
-        return num != null && !num.isEmpty() && isNumber(num) && Long.parseLong(num) >= 0;
-    }
-
-    public Pageable preparePaging(String page, String limit, String order, String sortBy){
-        if(Boolean.FALSE.equals(isValidNumber(limit))){
-            throw new BadRequest("Invalid limit", "pageable.limit.invalid");
-        }
-        if (Boolean.FALSE.equals(isValidNumber(page))){
-            throw new BadRequest("Invalid page", "pageable.page.invalid");
-        }
-
-        Sort sort;
-        if(order.equalsIgnoreCase("asc")){
-            sort = Sort.by(Sort.Direction.ASC, sortBy);
-        }
-        else{
-            sort = Sort.by(Sort.Direction.DESC, sortBy);
-        }
-
-        return PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
-                sort);
-    }
 
     public ListOutputResult resultPaging(Page<User> users){
         //mapper to profile response
@@ -115,10 +74,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ListOutputResult findAllUser(UserCriteria userCriteria, String page, String limit,
-                                             String order, String sortBy) {
-        Pageable pageable = preparePaging(page, limit, order, sortBy);
-
+    public ListOutputResult findAllUser(UserCriteria userCriteria, Pageable pageable) {
         Page<User> userPage = userQueryService.findByCriteria(userCriteria, pageable);
 
         return resultPaging(userPage);

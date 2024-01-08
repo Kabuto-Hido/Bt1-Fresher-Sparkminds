@@ -4,14 +4,12 @@ import com.bt1.qltv1.dto.register.OtpVerifyRequest;
 import com.bt1.qltv1.dto.register.RegisterRequest;
 import com.bt1.qltv1.dto.register.SendMailRequest;
 import com.bt1.qltv1.entity.Account;
-import com.bt1.qltv1.entity.Admin;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.repository.AccountRepository;
-import com.bt1.qltv1.repository.AdminRepository;
 import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.util.Global;
@@ -54,8 +52,9 @@ public class RegisterService {
                     "user.phone.phone-existed");
         }
 
+        //get user role
         Optional<Role> roleUserOptional = roleRepository.findById(2L);
-        log.info(roleUserOptional);
+        log.debug(roleUserOptional);
         List<Role> roleUserList = new ArrayList<>();
         roleUserOptional.ifPresent(roleUserList::add);
         Set<Role> roleUserSet = new HashSet<>(roleUserList);

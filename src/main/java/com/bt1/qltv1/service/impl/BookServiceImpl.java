@@ -38,39 +38,6 @@ public class BookServiceImpl implements BookService {
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
 
-    private Boolean isNumber(String s) {
-        try {
-            Long.parseLong(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private Boolean isValidNumber(String num) {
-        return num != null && !num.isEmpty() && isNumber(num) && Long.parseLong(num) >= 0;
-    }
-
-    public Pageable preparePaging(String page, String limit, String order, String sortBy){
-        if(Boolean.FALSE.equals(isValidNumber(limit))){
-            throw new BadRequest("Invalid limit", "pageable.limit.invalid");
-        }
-        if (Boolean.FALSE.equals(isValidNumber(page))){
-            throw new BadRequest("Invalid page", "pageable.page.invalid");
-        }
-
-        Sort sort;
-        if(order.equalsIgnoreCase("asc")){
-            sort = Sort.by(Sort.Direction.ASC, sortBy);
-        }
-        else{
-            sort = Sort.by(Sort.Direction.DESC, sortBy);
-        }
-
-        return PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
-                sort);
-    }
-
     public ListOutputResult resultPaging(Page<Book> books){
         if (books.isEmpty()){
             throw new NotFoundException("No result","search.book.notfound");
@@ -95,9 +62,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public ListOutputResult findAllBook(BookCriteria bookCriteria, String page,
-                                        String limit, String order, String sortBy) {
-        Pageable pageable = preparePaging(page, limit, order, sortBy);
+    public ListOutputResult findAllBook(BookCriteria bookCriteria, Pageable pageable) {
         Page<Book> bookPage = bookQueryService.findByCriteria(bookCriteria, pageable);
         return resultPaging(bookPage);
     }

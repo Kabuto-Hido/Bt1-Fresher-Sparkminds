@@ -3,6 +3,7 @@ package com.bt1.qltv1.service.impl;
 import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.entity.Account;
 import com.bt1.qltv1.enumeration.UserStatus;
+import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.MfaException;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.repository.AccountRepository;
@@ -93,6 +94,7 @@ public class AccountServiceImpl implements AccountService {
             accountRepository.save(account);
         }catch (Exception ex){
             log.error(ex.getMessage());
+            throw new BadRequest(ex.getMessage(),"enable-mfa.error");
         }
         finally {
             log.info("Enable MFA success");

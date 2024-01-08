@@ -6,6 +6,8 @@ import com.bt1.qltv1.entity.BaseEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
@@ -21,8 +23,8 @@ public class BookResponse extends BaseEntity {
     private String description;
     private Integer quantity;
     private boolean available;
-    private Double price;
-    private Double loanFee;
+    private BigDecimal price;
+    private BigDecimal loanFee;
     private AuthorRequest author;
     private GenreRequest genre;
 }

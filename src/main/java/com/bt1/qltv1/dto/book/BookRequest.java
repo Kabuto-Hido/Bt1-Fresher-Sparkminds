@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.ISBN;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,10 +26,10 @@ public class BookRequest {
     private boolean available;
 
     @NotNull(message = "Price can be not null")
-    private Double price;
+    private BigDecimal price;
 
     @NotNull(message = "Loan fee can be not null")
-    private Double loanFee;
+    private BigDecimal loanFee;
 
     @NotNull(message = "Author can be not null")
     private Long authorId;

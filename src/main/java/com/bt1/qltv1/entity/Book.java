@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.ISBN;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,10 +45,10 @@ public class Book extends BaseEntity{
     private boolean available = true;
 
     @Column(name = "price")
-    private Double price;
+    private BigDecimal price;
 
     @Column(name = "loan_fee")
-    private Double loanFee;
+    private BigDecimal loanFee;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

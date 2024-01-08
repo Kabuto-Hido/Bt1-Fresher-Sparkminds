@@ -1,9 +1,11 @@
 package com.bt1.qltv1.service.criteria;
 
 import com.bt1.qltv1.criteria.UserCriteria;
+import com.bt1.qltv1.entity.BaseEntity_;
 import com.bt1.qltv1.entity.Role_;
 import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.entity.User_;
+import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -15,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
 import javax.persistence.criteria.JoinType;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -76,7 +81,35 @@ public class UserQueryService extends QueryService<User> {
             if (criteria.getEmail() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getEmail(), User_.email));
             }
+
+            if(criteria.getFromTime()!= null) {
+                try {
+                    LocalDateTime from = fromString(criteria.getFromTime());
+                    specification = specification.and((root, query, criteriaBuilder)
+                            -> criteriaBuilder.greaterThanOrEqualTo(root.get(BaseEntity_.createdDate),
+                            from));
+                }catch (DateTimeParseException ex){
+                    throw new BadRequest("Please enter right format of date ddMMyyyy HHmmss",
+                            "get-book.from-date.invalid");
+                }
+            }
+
+            if(criteria.getToTime()!= null) {
+                try {
+                    LocalDateTime to = fromString(criteria.getFromTime());
+                    specification = specification.and((root, query, criteriaBuilder)
+                            -> criteriaBuilder.lessThanOrEqualTo(root.get(BaseEntity_.createdDate),
+                            to));
+                }catch (DateTimeParseException ex){
+                    throw new BadRequest("Please enter right format of date ddMMyyyy HHmmss",
+                            "get-book.from-date.invalid");
+                }
+            }
         }
         return specification;
+    }
+
+    private LocalDateTime fromString(String dateTime) throws DateTimeParseException {
+        return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("ddMMyyyy HHmmss"));
     }
 }

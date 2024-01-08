@@ -38,6 +38,9 @@
             <column name="created_by" type="varchar(255)"/>
             <column name="modified_by" type="varchar(255)"/>
         </createTable>
-
+    </changeSet>
+    <changeSet id="modifyColumn-Book-v1" author="liquibase">
+        <modifyDataType tableName="book" columnName="price" newDataType="decimal(10,2)"/>
+        <modifyDataType tableName="book" columnName="loan_fee" newDataType="decimal(10,2)"/>
     </changeSet>
 </databaseChangeLog>

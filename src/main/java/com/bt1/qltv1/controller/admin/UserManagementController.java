@@ -8,6 +8,10 @@ import com.bt1.qltv1.dto.user.UserDTO;
 import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.Global;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,15 +28,9 @@ public class UserManagementController {
 
     @GetMapping("/users")
     public ResponseEntity<ListOutputResult> getAllUser(UserCriteria userCriteria,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = Global.DEFAULT_PAGE) String page,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = Global.DEFAULT_LIMIT) String limit,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = "desc") String order,
-                                                       @RequestParam(required = false,
-                                                               defaultValue = Global.DEFAULT_SORT_BY) String sortBy) {
-        return ResponseEntity.ok(userService.findAllUser(userCriteria, page, limit, order, sortBy));
+                                                       @PageableDefault(sort = Global.DEFAULT_SORT_BY,
+                                                               direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(userService.findAllUser(userCriteria, pageable));
     }
 
     @GetMapping("/users/{id}")
