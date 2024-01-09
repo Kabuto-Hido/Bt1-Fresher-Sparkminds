@@ -1,7 +1,9 @@
 package com.bt1.qltv1.service;
 
+import com.bt1.qltv1.criteria.BaseCriteria;
 import com.bt1.qltv1.criteria.UserCriteria;
 import com.bt1.qltv1.dto.ListOutputResult;
+import com.bt1.qltv1.dto.book.UploadImageResponse;
 import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.dto.user.UserDTO;
@@ -17,7 +19,7 @@ import java.util.List;
 public interface UserService {
     ProfileResponse findById(long id);
 
-    ListOutputResult findAllUser(UserCriteria userCriteria, Pageable pageable);
+    ListOutputResult findAllUser(UserCriteria userCriteria, BaseCriteria baseCriteria, Pageable pageable);
 
     void importUserByCsv(MultipartFile file);
 
@@ -27,6 +29,9 @@ public interface UserService {
 
     User findFirstByEmail(String email);
 
-    void updateAvatar();
+    UploadImageResponse updateAvatar(MultipartFile avatar);
 
+    void deleteAvatar();
+
+    UploadImageResponse getAvatar();
 }
