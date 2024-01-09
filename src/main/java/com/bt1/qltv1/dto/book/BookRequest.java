@@ -3,6 +3,7 @@ package com.bt1.qltv1.dto.book;
 import lombok.*;
 import org.hibernate.validator.constraints.ISBN;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class BookRequest {
     private String image;
     private String description;
     @Builder.Default
+    @Min(value = 1, message = "The smallest quantity is 1!")
     private Integer quantity = 1;
     private boolean available;
 

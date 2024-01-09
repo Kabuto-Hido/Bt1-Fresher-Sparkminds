@@ -4,6 +4,8 @@ package com.bt1.qltv1.entity;
 import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.validation.Phone;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -29,14 +31,15 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 public class User extends Account{
+    @CsvIgnore
     @Column(name = "avatar")
     @Builder.Default
     private String avatar = Global.DEFAULT_AVATAR;
 
+    @CsvBindByName(column = "Phone", required = true)
     @Phone
     @Column(name = "phone", unique = true)
     private String phone;
-
 
     @Override
     public boolean equals(Object o) {

@@ -9,5 +9,7 @@ import java.util.List;
 
 @Service
 public interface FileService {
-    List<String[]> readCsvFileWithoutHeader(MultipartFile file) throws IOException, CsvException;
+    <T> List<String[]> readCsvFileWithoutHeader(MultipartFile file, Class<T> bean) throws IOException,
+            CsvException;
+
 }

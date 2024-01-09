@@ -30,8 +30,6 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
     private UserStatusFilter status;
     private BooleanFilter mfaEnabled;
     private BooleanFilter verifyMail;
-    private String fromTime;
-    private String toTime;
     private Boolean distinct;
 
     public UserCriteria(UserCriteria other) {
@@ -43,8 +41,6 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
         this.verifyMail = other.verifyMail == null ? null : other.verifyMail.copy();
         this.mfaEnabled = other.mfaEnabled == null ? null : other.mfaEnabled.copy();
         this.status = other.status == null ? null : other.status.copy();
-        this.fromTime = other.fromTime;
-        this.toTime = other.toTime;
         this.distinct = other.distinct;
     }
 
@@ -114,15 +110,13 @@ public class UserCriteria extends Throwable implements Serializable, Criteria {
                 && Objects.equals(getRole(), that.getRole())
                 && Objects.equals(getMfaEnabled(), that.getMfaEnabled())
                 && Objects.equals(getVerifyMail(), that.getVerifyMail())
-                && Objects.equals(getDistinct(), that.getDistinct())
-                && Objects.equals(getFromTime(), that.getFromTime())
-                && Objects.equals(getToTime(), that.getToTime());
+                && Objects.equals(getDistinct(), that.getDistinct());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getFullName(), getPhone(),
                 getEmail(), getStatus(), getMfaEnabled(), getVerifyMail(), getRole(),
-                getDistinct(), getFromTime(), getToTime());
+                getDistinct());
     }
 }
