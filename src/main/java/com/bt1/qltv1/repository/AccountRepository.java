@@ -23,7 +23,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     @Modifying
     @Transactional
-    @Query("update Account a set a.verifyMail = true, a.otp = null, a.otpExpired = null where a.email = ?1")
+    @Query("update Account a set a.verifyMail = true where a.email = ?1")
     void activateAccount(String email);
 
     Optional<Account> findFirstByEmailAndVerifyMail(String email, boolean isVerify);

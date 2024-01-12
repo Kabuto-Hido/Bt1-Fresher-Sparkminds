@@ -87,7 +87,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponse save(BookRequest bookRequest) {
+    public BookResponse save(BookRequest bookRequest, MultipartFile image) {
         Author author = authorRepository.findById(bookRequest.getAuthorId()).orElseThrow(() ->
                 new NotFoundException("Not found author with id " + bookRequest.getAuthorId(),
                         "author.id.not-exist"));
@@ -96,11 +96,18 @@ public class BookServiceImpl implements BookService {
                 new NotFoundException("Not found genre with id " + bookRequest.getGenreId(),
                         "genre.id.not-exist"));
 
+        //upload image book
+        Path filePath = imageService.saveImageToStorage(bookRequest.getIsbn(), Global.BOOK_DIR, image);
+        bookRequest.setImage(filePath.getFileName().toString());
+
         Book book;
         if (bookRequest.getId() != null) {
             book = findBookById(bookRequest.getId());
 
-            book.setIsbn(bookRequest.getIsbn());
+            if(!book.getIsbn().equals(bookRequest.getIsbn())){
+                checkExistIsbn(bookRequest.getIsbn());
+                book.setIsbn(bookRequest.getIsbn());
+            }
             book.setTitle(bookRequest.getTitle());
             book.setDescription(bookRequest.getDescription());
             book.setQuantity(bookRequest.getQuantity());
@@ -109,14 +116,10 @@ public class BookServiceImpl implements BookService {
             book.setLoanFee(bookRequest.getLoanFee());
             book.setImage(bookRequest.getImage());
         } else {
-            Optional<Book> bookByIsbn = bookRepository.findByIsbn(bookRequest.getIsbn());
-            if (bookByIsbn.isPresent()) {
-                throw new BadRequest("Isbn code duplicate, Please retype!",
-                        "book.isbn.isbn-existed");
-            }
-
+            checkExistIsbn(bookRequest.getIsbn());
             book = BookMapper.toEntity(bookRequest);
         }
+
         book.setAuthorId(author);
         book.setGenreId(genre);
 
@@ -134,7 +137,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(bookDeleted);
     }
 
-    @Transactional(rollbackFor = {BadRequest.class, ConstraintViolationException.class})
+    @Transactional
     @Override
     public void importBookByCsv(MultipartFile file) {
         try {
@@ -240,4 +243,12 @@ public class BookServiceImpl implements BookService {
         return NumberUtils.isCreatable(s);
     }
 
+    private void checkExistIsbn(String isbn){
+        Optional<Book> bookByIsbn = bookRepository.findByIsbn(isbn);
+        if (bookByIsbn.isPresent()) {
+            throw new BadRequest("Isbn code duplicate, Please retype!",
+                    "book.isbn.isbn-existed");
+        }
+
+    }
 }

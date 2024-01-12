@@ -4,12 +4,15 @@ import com.bt1.qltv1.dto.register.OtpVerifyRequest;
 import com.bt1.qltv1.dto.register.RegisterRequest;
 import com.bt1.qltv1.dto.register.SendMailRequest;
 import com.bt1.qltv1.entity.Account;
+import com.bt1.qltv1.entity.Otp;
 import com.bt1.qltv1.entity.Role;
 import com.bt1.qltv1.entity.User;
+import com.bt1.qltv1.enumeration.OtpType;
 import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.repository.AccountRepository;
+import com.bt1.qltv1.repository.OtpRepository;
 import com.bt1.qltv1.repository.RoleRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.util.Global;
@@ -37,6 +40,7 @@ public class RegisterService {
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
     private final SpringTemplateEngine templateEngine;
+    private final OtpRepository otpRepository;
 
     @Transactional(rollbackFor = MessagingException.class)
     public void register(RegisterRequest registerRequest) {
@@ -62,22 +66,24 @@ public class RegisterService {
         //generate token
         String token = jwtUtil.generateEmailToken(registerRequest.getEmail());
         LocalDateTime verifyExpired = jwtUtil.extractExpiration(token);
+        String code = Global.getOTP();
 
-        String otp = Global.getOTP();
+        Otp otpRegister = Otp.builder()
+                .code(code)
+                .otpExpired(verifyExpired).build();
+
 
         User newUser = User.builder().fullName(registerRequest.getFullname())
                 .status(UserStatus.ACTIVE)
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .email(registerRequest.getEmail())
                 .phone(registerRequest.getPhone())
-                .otp(otp)
-                .otpExpired(verifyExpired)
                 .roleSet(roleUserSet).build();
+        newUser = userRepository.save(newUser);
 
-        userRepository.save(newUser);
-
-        sendEmailToActivatedAccount(registerRequest.getEmail(), token, otp);
-
+        otpRegister.setAccount(newUser);
+        otpRepository.save(otpRegister);
+        sendEmailToActivatedAccount(registerRequest.getEmail(), token, code);
     }
 
     public void sendEmailToActivatedAccount(String addressGmail, String token, String otp) {
@@ -99,12 +105,14 @@ public class RegisterService {
             throw new BadRequest("Link expired", "user.verify-link.expired");
         }
         String email = jwtUtil.extractUsername(token);
-        Optional<Account> accountConfirm = accountRepository.findFirstByEmailAndVerifyMail(email,
-                true);
-        if (accountConfirm.isPresent()) {
+        Account account = accountRepository.findByEmail(email).orElseThrow(()->
+                new NotFoundException("Not found user with email "+email,"confirm.email.not-exist"));
+        if (account.isVerifyMail()) {
             throw new BadRequest("Email already verify mail",
-                    "user.confirm.verify-mail");
+                    "user.confirm.mail-verified");
         }
+
+        otpRepository.reset(account.getId());
         accountRepository.activateAccount(email);
     }
 
@@ -116,15 +124,22 @@ public class RegisterService {
             throw new BadRequest("Email already verify mail", "user.already.verify-mail");
         }
 
+        Otp otp = otpRepository.findByAccountIdAndType(account.getId(), OtpType.REGISTER)
+                .orElseThrow(()->
+                        new NotFoundException(String.format("Not found otp with account %s type %s",
+                                account.getId(), OtpType.REGISTER), "otp.invalid"));
+
         LocalDateTime now = LocalDateTime.now();
-        if(account.getOtpExpired().isBefore(now)){
+        if(otp.getOtpExpired().isBefore(now)){
             throw new BadRequest("OTP expired", "user.verify-link.expired");
         }
 
-        if (!account.getOtp().equals(otpVerifyRequest.getOtp())){
+        if (!otp.getCode().equals(otpVerifyRequest.getOtp())){
             throw new BadRequest("Otp is invalid", "user.otp.invalid");
         }
 
+
+        otpRepository.reset(account.getId());
         accountRepository.activateAccount(otpVerifyRequest.getEmail());
     }
 
@@ -141,13 +156,25 @@ public class RegisterService {
         //generate token
         String token = jwtUtil.generateEmailToken(sendMailRequest.getEmail());
         LocalDateTime verifyExpired = jwtUtil.extractExpiration(token);
-        String otp = Global.getOTP();
+        String code = Global.getOTP();
 
-        sendEmailToActivatedAccount(sendMailRequest.getEmail(), token, otp);
+        Otp otpEntity;
+        Optional<Otp> otpOptional = otpRepository.findByAccountIdAndType(account.getId(),
+                OtpType.REGISTER);
 
-        account.setOtp(otp);
-        account.setOtpExpired(verifyExpired);
-        accountRepository.save(account);
+        if(otpOptional.isPresent()){
+            otpEntity = otpOptional.get();
+        }
+        else {
+            otpEntity = new Otp();
+            otpEntity.setAccount(account);
+        }
+
+        otpEntity.setCode(code);
+        otpEntity.setOtpExpired(verifyExpired);
+        otpRepository.save(otpEntity);
+
+        sendEmailToActivatedAccount(sendMailRequest.getEmail(), token, code);
 
     }
 

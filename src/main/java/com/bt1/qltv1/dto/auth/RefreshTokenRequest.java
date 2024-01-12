@@ -10,6 +10,6 @@ import javax.validation.constraints.NotNull;
 @Builder
 
 public class RefreshTokenRequest {
-    @NotNull
+    @NotNull(message = "{Refresh token may be not null}")
     private String refreshToken;
 }

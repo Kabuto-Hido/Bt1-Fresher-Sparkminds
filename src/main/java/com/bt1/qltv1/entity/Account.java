@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -32,17 +32,17 @@ public class Account extends BaseEntity {
     private Long id;
 
     @CsvBindByName(column = "Fullname", required = true)
-    @NotBlank(message = "Name should not be null")
+    @NotNull(message = "{account.full-name.null}")
     @Column(name = "fullname", length = 100, nullable = false)
     private String fullName;
 
     @CsvBindByName(column = "Email", required = true)
-    @Email(message = "Please enter the valid email")
+    @Email(message = "{user.email.invalid}")
     @Column(name = "email", unique = true)
     private String email;
 
     @CsvIgnore
-    @NotBlank(message = "Password should not be null")
+    @NotNull(message = "{user.password.null}")
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -62,14 +62,6 @@ public class Account extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
-
-    @CsvIgnore
-    @Column(name = "otp", length = 6)
-    private String otp;
-
-    @CsvIgnore
-    @Column(name = "otp_expired")
-    private LocalDateTime otpExpired;
 
     @CsvIgnore
     @Column(name = "mfa_enabled")
@@ -98,6 +90,11 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "accountId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Session> listSession = new ArrayList<>();
+
+    @CsvIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Otp> listOtp = new ArrayList<>();
 
     public boolean isActive(){
         return this.getStatus().equals(UserStatus.ACTIVE);

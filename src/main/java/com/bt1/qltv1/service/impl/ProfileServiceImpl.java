@@ -4,10 +4,13 @@ import com.bt1.qltv1.dto.password.ChangePasswordRequest;
 import com.bt1.qltv1.dto.register.OtpVerifyRequest;
 import com.bt1.qltv1.dto.user.VerifySms;
 import com.bt1.qltv1.entity.Account;
+import com.bt1.qltv1.entity.Otp;
 import com.bt1.qltv1.entity.User;
+import com.bt1.qltv1.enumeration.OtpType;
 import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.repository.AccountRepository;
+import com.bt1.qltv1.repository.OtpRepository;
 import com.bt1.qltv1.repository.SessionRepository;
 import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.EmailService;
@@ -23,6 +26,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 @Log4j
@@ -34,10 +38,18 @@ public class ProfileServiceImpl implements ProfileService {
     private final EmailService emailService;
     private final SpringTemplateEngine templateEngine;
     private final PasswordEncoder passwordEncoder;
+    private final OtpRepository otpRepository;
 
     private Account getCurrentAccount(){
         String email = UserDetailsServiceImpl.getEmailLoggedIn();
         return findAccByEmail(email);
+    }
+
+    private Otp getOtpByAccountIdAndType(long accId, OtpType type){
+        return otpRepository.findByAccountIdAndType(accId, type)
+                .orElseThrow(()->
+                        new NotFoundException(String.format("Not found otp with account %s type %s",
+                                accId,type), "otp.invalid"));
     }
 
     private Account findAccByEmail(String email){
@@ -91,23 +103,40 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void changeEmail(String newEmail) {
         String oldEmail = UserDetailsServiceImpl.getEmailLoggedIn();
-        if (oldEmail != null && oldEmail.equals(newEmail)) {
+
+        //check new email
+        Optional<User> checkNewEmail = userRepository.findByEmail(newEmail);
+        if (checkNewEmail.isPresent()) {
             throw new BadRequest("Email duplicate, Please retype!",
                     "account.email.email-existed");
         }
 
         Account account = findAccByEmail(oldEmail);
 
-        LocalDateTime verifyExpired = LocalDateTime.now().plusMinutes(15);
-        String otp = Global.getOTP();
-        account.setOtp(otp);
-        account.setOtpExpired(verifyExpired);
 
-        accountRepository.save(account);
+
+        LocalDateTime verifyExpired = LocalDateTime.now().plusMinutes(15);
+        String code = Global.getOTP();
+
+        Otp otpEntity;
+        Optional<Otp> otpOptional = otpRepository.findByAccountIdAndType(account.getId(),
+                OtpType.CHANGE_EMAIL);
+        if(otpOptional.isPresent()){
+            otpEntity = otpOptional.get();
+        }
+        else {
+            otpEntity = new Otp();
+            otpEntity.setType(OtpType.CHANGE_EMAIL);
+            otpEntity.setAccount(account);
+        }
+
+        otpEntity.setCode(code);
+        otpEntity.setOtpExpired(verifyExpired);
+        otpRepository.save(otpEntity);
 
         Context context = new Context();
         context.setVariable("email", newEmail);
-        context.setVariable("otp", otp);
+        context.setVariable("otp", code);
 
         sendEmail(context,"email-verify-template.html",
                 newEmail,"Verify new mail for changing!");
@@ -116,44 +145,59 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void verifyNewEmailOtp(OtpVerifyRequest otpVerifyRequest) {
         Account account = getCurrentAccount();
+        Otp otp = getOtpByAccountIdAndType(account.getId(), OtpType.CHANGE_EMAIL);
 
         LocalDateTime now = LocalDateTime.now();
-        if(account.getOtpExpired().isBefore(now)){
+        if(otp.getOtpExpired().isBefore(now)){
             throw new BadRequest("OTP expired", "account.verify-link.expired");
         }
 
-        if (!account.getOtp().equals(otpVerifyRequest.getOtp())){
+        if (!otp.getCode().equals(otpVerifyRequest.getOtp())){
             throw new BadRequest("Otp is invalid", "account.otp.invalid");
         }
-
-        account.setEmail(otpVerifyRequest.getEmail());
-        account.setOtp(null);
-        account.setOtpExpired(null);
 
         //block all session before
         sessionRepository.blockAllSessionByAccId(account.getId());
 
+        otp.setCode(null);
+        otp.setOtpExpired(null);
+        otpRepository.save(otp);
+
+        account.setEmail(otpVerifyRequest.getEmail());
         accountRepository.save(account);
     }
 
     @Override
     public void changePhone(String newPhone) {
-        String email = UserDetailsServiceImpl.getEmailLoggedIn();
-
-        User user = userRepository.findByEmail(email).orElseThrow(()->
-                new NotFoundException("Your email not exist!","user.email.not-exist"));
-
-        if(newPhone.equals(user.getPhone())){
+        Optional<User> checkNewPhone = userRepository.findByPhone(newPhone);
+        if(checkNewPhone.isPresent()){
             throw new BadRequest("Phone duplicate, Please retype!",
                     "user.phone.phone-existed");
         }
 
+        String email = UserDetailsServiceImpl.getEmailLoggedIn();
+        User user = userRepository.findByEmail(email).orElseThrow(()->
+                new NotFoundException("Your email not exist!","user.email.not-exist"));
+
         LocalDateTime otpExpired = LocalDateTime.now().plusMinutes(15);
         String otp = Global.getOTP();
-        user.setOtp(otp);
-        user.setOtpExpired(otpExpired);
 
-        userRepository.save(user);
+        Otp otpEntity;
+        Optional<Otp> otpOptional = otpRepository.findByAccountIdAndType(user.getId(),
+                OtpType.CHANGE_PHONE);
+        if(otpOptional.isPresent()){
+            otpEntity = otpOptional.get();
+        }
+        else {
+            otpEntity = new Otp();
+            otpEntity.setType(OtpType.CHANGE_PHONE);
+            otpEntity.setAccount(user);
+        }
+
+        otpEntity.setCode(otp);
+        otpEntity.setOtpExpired(otpExpired);
+
+        otpRepository.save(otpEntity);
     }
 
     @Override
@@ -162,19 +206,22 @@ public class ProfileServiceImpl implements ProfileService {
         User user = userRepository.findByEmail(email).orElseThrow(()->
                 new NotFoundException("Not found email!","user.email.not-exist"));
 
+        Otp otp = getOtpByAccountIdAndType(user.getId(), OtpType.CHANGE_PHONE);
+
         LocalDateTime now = LocalDateTime.now();
-        if(user.getOtpExpired().isBefore(now)){
+        if(otp.getOtpExpired().isBefore(now)){
             throw new BadRequest("OTP expired", "user.verify-link.expired");
         }
 
-        if (!user.getOtp().equals(verifySms.getOtp())){
+        if (!otp.getCode().equals(verifySms.getOtp())){
             throw new BadRequest("Otp is invalid", "user.otp.invalid");
         }
 
-        user.setPhone(verifySms.getPhone());
-        user.setOtp(null);
-        user.setOtpExpired(null);
+        otp.setCode(null);
+        otp.setOtpExpired(null);
+        otpRepository.save(otp);
 
+        user.setPhone(verifySms.getPhone());
         userRepository.save(user);
     }
 

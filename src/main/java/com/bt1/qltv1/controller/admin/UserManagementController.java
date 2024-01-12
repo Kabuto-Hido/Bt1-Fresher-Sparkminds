@@ -66,7 +66,7 @@ public class UserManagementController {
     public ResponseEntity<SuccessResponseDTO> insertNewUserByFile(@RequestParam MultipartFile file) {
         userService.importUserByCsv(file);
         return ResponseEntity.ok(new SuccessResponseDTO(
-                HttpStatus.OK,
+                HttpStatus.CREATED,
                 "Import user in file " + file.getOriginalFilename() + " successful"));
     }
 }

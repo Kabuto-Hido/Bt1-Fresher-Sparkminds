@@ -2,6 +2,7 @@ package com.bt1.qltv1.controller.user;
 
 import com.bt1.qltv1.dto.SuccessResponseDTO;
 import com.bt1.qltv1.dto.book.UploadImageResponse;
+import com.bt1.qltv1.dto.user.ProfileResponse;
 import com.bt1.qltv1.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,5 +30,10 @@ public class UserController {
     @GetMapping("/profile/avatar")
     public ResponseEntity<UploadImageResponse> reviewAvatar(){
         return ResponseEntity.ok(userService.getAvatar());
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ProfileResponse> getProfileUser(){
+        return ResponseEntity.ok(userService.getProfile());
     }
 }

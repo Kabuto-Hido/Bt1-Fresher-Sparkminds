@@ -1,19 +1,19 @@
 package com.bt1.qltv1.entity;
 
 import com.bt1.qltv1.util.Global;
-import com.opencsv.bean.CsvBindAndJoinByName;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvIgnore;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.ISBN;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -49,7 +49,7 @@ public class Book extends BaseEntity{
 
     @CsvBindByName(column = "Quantity", required = true)
     @Column(name = "quantity", nullable = false)
-    @Min(value = 1, message = "The smallest quantity is 1!")
+    @Min(value = 1, message = "{book.quantity.minimum}")
     @Builder.Default
     private Integer quantity = 1;
 
@@ -59,12 +59,12 @@ public class Book extends BaseEntity{
     private boolean available = true;
 
     @CsvBindByName(column = "Price", required = true)
-    @NotNull(message = "Price can be not null")
+    @NotNull(message = "{book.price.null}")
     @Column(name = "price")
     private BigDecimal price;
 
     @CsvBindByName(column = "Loan Fee", required = true)
-    @NotNull(message = "Loan fee can be not null")
+    @NotNull(message = "{book.loan-fee.null}")
     @Column(name = "loan_fee")
     private BigDecimal loanFee;
 
@@ -79,4 +79,8 @@ public class Book extends BaseEntity{
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "genre_id", referencedColumnName = "id")
     private Genre genreId;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<LoanDetail> listLoanDetail = new ArrayList<>();
 }

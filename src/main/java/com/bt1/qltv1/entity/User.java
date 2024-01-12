@@ -1,7 +1,6 @@
 package com.bt1.qltv1.entity;
 
 
-import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.validation.Phone;
 import com.opencsv.bean.CsvBindByName;
@@ -10,15 +9,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @SuperBuilder
@@ -40,6 +32,11 @@ public class User extends Account{
     @Phone
     @Column(name = "phone", unique = true)
     private String phone;
+
+    @CsvIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Loan> listLoan = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

@@ -20,16 +20,9 @@ import java.util.Set;
 
 @Component
 public class FileServiceImpl implements FileService {
-    public boolean isCsvFormat(String fileType) {
-        return Global.CSV_TYPE.equals(fileType);
-    }
-
     @Override
     public <T> List<String[]> readCsvFileWithoutHeader(MultipartFile file, Class<T> bean) throws IOException,
             CsvException {
-        if (!isCsvFormat(file.getContentType())) {
-            throw new BadRequest("Just support CSV file!!", "file.type.invalid");
-        }
         try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
 
             //validation header

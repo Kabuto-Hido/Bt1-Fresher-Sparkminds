@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="createTableOTP" author="liquibase">
+        <createTable tableName="otp">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="varchar(6)"/>
+            <column name="otp_expired" type="datetime"/>
+            <column name="type" type="enum('REGISTER', 'CHANGE_PHONE','CHANGE_EMAIL')"/>
+
+            <column name="account_id" type="bigint">
+                <constraints foreignKeyName="fk_otp_account"
+                             referencedColumnNames="id" referencedTableName="account"/>
+            </column>
+
+            <column name="created_date" type="datetime"/>
+            <column name="modified_date" type="datetime"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="modified_by" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

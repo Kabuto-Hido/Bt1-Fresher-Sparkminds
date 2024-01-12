@@ -1,12 +1,6 @@
 package com.bt1.qltv1.service.impl;
 
-import com.bt1.qltv1.dto.book.UploadImageResponse;
-import com.bt1.qltv1.entity.Book;
-import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.exception.BadRequest;
-import com.bt1.qltv1.exception.NotFoundException;
-import com.bt1.qltv1.repository.BookRepository;
-import com.bt1.qltv1.repository.UserRepository;
 import com.bt1.qltv1.service.ImageService;
 import com.bt1.qltv1.util.Global;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +23,6 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Path saveImageToStorage(String fileName, String uploadDir,
                                    MultipartFile file) {
-        if (!isSupportedImageType(Objects.requireNonNull(file.getContentType()))) {
-            throw new BadRequest("Just support JPG, PNG file!!!!",
-                    "image.type.invalid");
-        }
-
         fileName += getFileExtension(file);
 
         Path uploadPath = Path.of(uploadDir);
@@ -56,19 +45,13 @@ public class ImageServiceImpl implements ImageService {
     private static String getFileExtension(MultipartFile filePath) {
         String fileName = filePath.getOriginalFilename();
 
-        int dotIndex = 0;
+        int dotIndex;
         if (fileName != null) {
             dotIndex = fileName.lastIndexOf('.');
             return (dotIndex == -1) ? "" : fileName.substring(dotIndex);
         }
 
         return null;
-    }
-
-    private boolean isSupportedImageType(String contentType) {
-        return contentType.equals("image/png")
-                || contentType.equals("image/jpg")
-                || contentType.equals("image/jpeg");
     }
 
     @Override

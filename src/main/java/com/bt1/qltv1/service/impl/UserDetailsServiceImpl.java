@@ -1,12 +1,8 @@
 package com.bt1.qltv1.service.impl;
 
 import com.bt1.qltv1.entity.Account;
-import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.exception.NotFoundException;
 import com.bt1.qltv1.repository.AccountRepository;
-import com.bt1.qltv1.repository.AdminRepository;
-import com.bt1.qltv1.repository.UserRepository;
-import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.util.ApplicationUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -23,19 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserRepository userRepository;
     private final AccountRepository accountRepository;
-    private final AdminRepository adminRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(email).orElseThrow(()->
                 new NotFoundException("Email " + email + " was not found in the database",
                         "{user.login.email.invalid}"));
-
-//        User user = userRepository.findByEmail(email).orElseThrow(()->
-//                new NotFoundException("User with email " + email + " was not found in the database",
-//                        "{user.login.email.invalid}"));
         return new ApplicationUser(account);
     }
 

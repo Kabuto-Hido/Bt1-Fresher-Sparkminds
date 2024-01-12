@@ -24,7 +24,6 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
 
     private String getCountryCode(String phoneNumber) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
-
         try {
             Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber,
                     null);

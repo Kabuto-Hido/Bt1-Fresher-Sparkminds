@@ -34,6 +34,27 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendMailWithInline(String sendTo, String body, String subject) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper;
+
+        try {
+            helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+            helper.setFrom(new InternetAddress("ngobutuananh@gmail.com",
+                    "Sparkminds Library"));
+
+            helper.setTo(sendTo);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            log.error(e.getMessage());
+            throw new IllegalArgumentException("Gmail send fail");
+        }
+
+        emailSender.send(message);
+    }
+
+    @Override
     public void sendAsHtml(String sendTo, String body, String subject) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper;

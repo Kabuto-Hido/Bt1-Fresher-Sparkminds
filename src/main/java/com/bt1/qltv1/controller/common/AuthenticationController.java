@@ -10,7 +10,6 @@ import com.bt1.qltv1.dto.mfa.VerifyMfaRequest;
 import com.bt1.qltv1.service.AccountService;
 import com.bt1.qltv1.service.AuthService;
 import com.bt1.qltv1.service.MfaService;
-import com.bt1.qltv1.service.UserService;
 import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +28,7 @@ public class AuthenticationController {
     private final MfaService mfaService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> authenticate(@Valid @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 

@@ -4,7 +4,6 @@ import lombok.*;
 import org.hibernate.validator.constraints.ISBN;
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -16,25 +15,32 @@ import java.math.BigDecimal;
 @ToString
 public class BookRequest {
     private Long id;
+
     @ISBN
     private String isbn;
-    @NotBlank(message = "Title can be not null")
+
+    @NotNull(message = "{book.title.null}")
     private String title;
+
     private String image;
+
     private String description;
+
     @Builder.Default
-    @Min(value = 1, message = "The smallest quantity is 1!")
+    @Min(value = 1, message = "{book.quantity.minimum}")
     private Integer quantity = 1;
+
     private boolean available;
 
-    @NotNull(message = "Price can be not null")
+    @NotNull(message = "{book.price.null}")
     private BigDecimal price;
 
-    @NotNull(message = "Loan fee can be not null")
+    @NotNull(message = "{book.loan-fee.null}")
     private BigDecimal loanFee;
 
-    @NotNull(message = "Author can be not null")
+    @NotNull(message = "{book.author.null}")
     private Long authorId;
-    @NotNull(message = "Genre can be not null")
+
+    @NotNull(message = "{book.genre.null}")
     private Long genreId;
 }

@@ -1,6 +1,5 @@
 package com.bt1.qltv1.criteria;
 
-import com.bt1.qltv1.entity.BaseEntity_;
 import com.bt1.qltv1.exception.BadRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

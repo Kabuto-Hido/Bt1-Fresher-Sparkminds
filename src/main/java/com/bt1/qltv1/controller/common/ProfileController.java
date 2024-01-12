@@ -5,9 +5,11 @@ import com.bt1.qltv1.dto.password.ChangePasswordRequest;
 import com.bt1.qltv1.dto.register.OtpVerifyRequest;
 import com.bt1.qltv1.dto.user.VerifySms;
 import com.bt1.qltv1.service.ProfileService;
+import com.bt1.qltv1.validation.Phone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,6 +18,7 @@ import javax.validation.constraints.Email;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Validated
 public class ProfileController {
     private final ProfileService profileService;
 
@@ -44,10 +47,9 @@ public class ProfileController {
                 "Send mail success! Please confirm your new email!"));
     }
 
-    @PostMapping("user/change-phone")
-    public ResponseEntity<SuccessResponseDTO> changePhone(@RequestParam(name = "phone")
-                                                          @Email(message = "{user.phone.invalid}")
-                                                          String newPhone){
+    @PostMapping("user/change-phone/{phone}")
+    public ResponseEntity<SuccessResponseDTO> changePhone(@Phone @PathVariable(name = "phone")
+                                                              String newPhone){
         profileService.changePhone(newPhone);
         return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
                 "Send otp to your sms success!"));

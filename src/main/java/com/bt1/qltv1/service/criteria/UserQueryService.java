@@ -3,7 +3,7 @@ package com.bt1.qltv1.service.criteria;
 import com.bt1.qltv1.criteria.BaseCriteria;
 import com.bt1.qltv1.criteria.UserCriteria;
 import com.bt1.qltv1.entity.*;
-import com.bt1.qltv1.exception.BadRequest;
+import com.bt1.qltv1.enumeration.UserStatus;
 import com.bt1.qltv1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -15,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
 import javax.persistence.criteria.JoinType;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -48,8 +45,12 @@ public class UserQueryService extends QueryService<User> {
         return userRepository.count(specification);
     }
 
+    public Specification<User> setNoStatus(UserStatus status){
+        return (root, query, builder) -> builder.notEqual(root.get(Account_.STATUS), status);
+    }
+
     protected Specification<User> createSpecification(UserCriteria criteria) {
-        Specification<User> specification = Specification.where(null);
+        Specification<User> specification = Specification.where(setNoStatus(UserStatus.DELETED));
 
         if (criteria != null) {
             // This has to be called first, because the distinct method returns null

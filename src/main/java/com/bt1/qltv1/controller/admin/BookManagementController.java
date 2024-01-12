@@ -4,48 +4,97 @@ import com.bt1.qltv1.criteria.BaseCriteria;
 import com.bt1.qltv1.criteria.BookCriteria;
 import com.bt1.qltv1.dto.ListOutputResult;
 import com.bt1.qltv1.dto.SuccessResponseDTO;
-import com.bt1.qltv1.dto.author.AuthorRequest;
 import com.bt1.qltv1.dto.book.BookRequest;
 import com.bt1.qltv1.dto.book.BookResponse;
 import com.bt1.qltv1.dto.book.UploadImageResponse;
-import com.bt1.qltv1.entity.Book;
 import com.bt1.qltv1.service.BookService;
-import com.bt1.qltv1.service.ImageService;
 import com.bt1.qltv1.util.Global;
+import com.bt1.qltv1.validation.CsvType;
 import com.bt1.qltv1.validation.ValidImage;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.ISBN;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/v1/admin/book-management")
 @RequiredArgsConstructor
+@Validated
 public class BookManagementController {
     private final BookService bookService;
-    private final ImageService imageService;
 
     @PostMapping("/books")
-    public ResponseEntity<SuccessResponseDTO> createNewBook(@Valid @RequestBody
-                                                            BookRequest request) {
-        bookService.save(request);
-        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+    public ResponseEntity<SuccessResponseDTO> createNewBook(@ISBN @RequestParam String isbn,
+                                                            @NotNull(message = "{book.title.null}")
+                                                            @RequestParam String title,
+                                                            @ValidImage @RequestParam MultipartFile image,
+                                                            @RequestParam(required = false) String description,
+                                                            @Min(value = 1, message = "{book.quantity.minimum}")
+                                                                @RequestParam Integer quantity,
+                                                            @NotNull(message = "{book.price.null}")
+                                                                @RequestParam BigDecimal price,
+                                                            @NotNull(message = "{book.loan-fee.null}")
+                                                            @RequestParam BigDecimal loanFee,
+                                                            @NotNull(message = "{book.author.null}")
+                                                                @RequestParam long authorId,
+                                                            @NotNull(message = "{book.genre.null}")
+                                                                @RequestParam long genreId) {
+         BookRequest request = BookRequest.builder()
+                .isbn(isbn)
+                .title(title)
+                .description(description)
+                .quantity(quantity)
+                .price(price)
+                .loanFee(loanFee)
+                .genreId(genreId)
+                .authorId(authorId).build();
+        bookService.save(request, image);
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.CREATED,
                 "Add new book successful!"));
     }
 
     @PutMapping("/books/{id}")
     public ResponseEntity<BookResponse> updateBook(@NotNull(message = "Id can be not null")
                                                        @PathVariable long id,
-                                                   @Valid @RequestBody BookRequest request) {
-        request.setId(id);
-        return ResponseEntity.ok(bookService.save(request));
+                                                   @ISBN @RequestParam String isbn,
+                                                   @NotNull(message = "{book.title.null}")
+                                                       @RequestParam String title,
+                                                   @ValidImage @RequestParam MultipartFile image,
+                                                   @RequestParam(required = false) String description,
+                                                   @Min(value = 1, message = "{book.quantity.minimum}")
+                                                       @RequestParam Integer quantity,
+                                                   @RequestParam Boolean available,
+                                                   @NotNull(message = "{book.price.null}")
+                                                       @RequestParam BigDecimal price,
+                                                   @NotNull(message = "{book.loan-fee.null}")
+                                                       @RequestParam BigDecimal loanFee,
+                                                   @NotNull(message = "{book.author.null}")
+                                                       @RequestParam long authorId,
+                                                   @NotNull(message = "{book.genre.null}")
+                                                       @RequestParam long genreId ) {
+        BookRequest request = BookRequest.builder()
+                .id(id)
+                .isbn(isbn)
+                .title(title)
+                .description(description)
+                .available(available)
+                .quantity(quantity)
+                .price(price)
+                .loanFee(loanFee)
+                .genreId(genreId)
+                .authorId(authorId).build();
+        return ResponseEntity.ok(bookService.save(request,image));
     }
 
     @DeleteMapping("/books/{id}")
@@ -59,7 +108,7 @@ public class BookManagementController {
     @PutMapping("books/{id}/image")
     public ResponseEntity<UploadImageResponse> uploadImage(@NotNull(message = "Id can be not null")
                                                                @PathVariable long id,
-                                                           @RequestParam MultipartFile image) {
+                                                           @ValidImage @RequestParam MultipartFile image) {
         return ResponseEntity.ok(bookService.uploadBookImage(id, image));
     }
 
@@ -86,10 +135,10 @@ public class BookManagementController {
     }
 
     @PostMapping("/books/upload-csv")
-    public ResponseEntity<SuccessResponseDTO> insertNewBookByFile(@RequestParam MultipartFile file) {
+    public ResponseEntity<SuccessResponseDTO> insertNewBookByFile(@CsvType @RequestParam MultipartFile file) {
         bookService.importBookByCsv(file);
         return ResponseEntity.ok(new SuccessResponseDTO(
-                HttpStatus.OK,
+                HttpStatus.CREATED,
                 "Import book in file " + file.getOriginalFilename() + " successful"));
     }
 }

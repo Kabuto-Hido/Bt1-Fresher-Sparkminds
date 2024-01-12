@@ -9,34 +9,10 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-<!--            <column name="fullname" type="varchar(100)">-->
-<!--                <constraints nullable="false"/>-->
-<!--            </column>-->
             <column name="avatar" type="varchar(255)"/>
             <column name="phone" type="varchar(255)">
                 <constraints unique="true"/>
             </column>
-<!--            <column name="email" type="varchar(255)">-->
-<!--                <constraints unique="true"/>-->
-<!--            </column>-->
-<!--            <column name="password" type="varchar(255)">-->
-<!--                <constraints nullable="false"/>-->
-<!--            </column>-->
-<!--            <column name="failed_attempt" type="int" defaultValueNumeric="0">-->
-<!--                <constraints nullable="false"/>-->
-<!--            </column>-->
-<!--            <column name="lock_time" type="datetime"/>-->
-<!--            <column name="status" type="enum('ACTIVE', 'BLOCK','DELETED')"/>-->
-<!--            <column name="mfa_enabled" type="boolean" defaultValueBoolean="false" />-->
-<!--            <column name="secret" type="varchar(255)"/>-->
-<!--            <column name="verify_mail" type="boolean" defaultValueBoolean="false" />-->
-<!--            <column name="otp" type="varchar(6)"/>-->
-<!--            <column name="otp_expired" type="datetime"/>-->
-
-<!--            <column name="created_date" type="datetime"/>-->
-<!--            <column name="modified_date" type="datetime"/>-->
-<!--            <column name="created_by" type="varchar(255)"/>-->
-<!--            <column name="modified_by" type="varchar(255)"/>-->
         </createTable>
     </changeSet>
 </databaseChangeLog>

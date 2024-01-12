@@ -16,7 +16,7 @@ public interface BookService {
     ListOutputResult findAllBook(BookCriteria bookCriteria, BaseCriteria baseCriteria,
                                  Pageable pageable);
 
-    BookResponse save(BookRequest bookRequest);
+    BookResponse save(BookRequest bookRequest, MultipartFile image);
     void deleteById(long id);
 
     void importBookByCsv(MultipartFile file);

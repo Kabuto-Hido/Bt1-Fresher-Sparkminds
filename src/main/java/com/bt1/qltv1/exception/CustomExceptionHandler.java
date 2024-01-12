@@ -68,14 +68,12 @@ public class CustomExceptionHandler {
     public ResponseEntity<List<ViolationResponse>> handleConstraintValidationException(
             ConstraintViolationException ex) {
         List<ViolationResponse> errors = new ArrayList<>();
-        StringBuilder code = new StringBuilder();
         for (ConstraintViolation violation : ex.getConstraintViolations()) {
-            code.append(violation.getRootBeanClass().getSimpleName()).append(".")
-                    .append(violation.getPropertyPath()).append(".invalid");
+            String code = violation.getRootBeanClass().getSimpleName() + "."
+                    + violation.getPropertyPath() + ".invalid";
 
             errors.add(new ViolationResponse(violation.getPropertyPath().toString()
-                    , violation.getMessage()
-                    , code.toString()));
+                    , violation.getMessage(), code));
 
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -87,15 +85,13 @@ public class CustomExceptionHandler {
     public ResponseEntity<List<ViolationResponse>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex) {
         List<ViolationResponse> errors = new ArrayList<>();
-        StringBuilder code = new StringBuilder();
 
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            code.append(fieldError.getObjectName()).append(".")
-                    .append(fieldError.getField()).append(".invalid");
-
+            String code = fieldError.getObjectName() + "."
+                    + fieldError.getField() + ".invalid";
+            System.out.println(code);
             errors.add(new ViolationResponse(fieldError.getField(),
-                    fieldError.getDefaultMessage(), code.toString()));
-            code.setLength(0);
+                    fieldError.getDefaultMessage(), code));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errors);

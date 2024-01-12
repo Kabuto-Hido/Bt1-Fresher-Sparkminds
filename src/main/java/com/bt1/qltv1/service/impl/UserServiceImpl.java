@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         return resultPaging(userPage);
     }
 
-    @Transactional(rollbackFor = {BadRequest.class, ConstraintViolationException.class})
+    @Transactional
     @Override
     public void importUserByCsv(MultipartFile file) {
         try {
@@ -142,14 +142,19 @@ public class UserServiceImpl implements UserService {
         Set<Role> roleUserSet = new HashSet<>(roleUserList);
 
         User user;
+
         //update
         if (dto.getId() != null) {
             user = userRepository.findById(dto.getId()).orElseThrow(() ->
                     new NotFoundException("User not exist!", "user.id.invalid"));
 
+            if(!user.getEmail().equals(dto.getEmail()) || !user.getPhone().equals(dto.getPhone())){
+                checkEmailOrPhoneValid(dto.getEmail(), dto.getPhone());
+                user.setEmail(dto.getEmail());
+                user.setPhone(dto.getPhone());
+            }
+
             user.setFullName(dto.getFullname());
-            user.setPhone(dto.getPhone());
-            user.setEmail(dto.getEmail());
             user.setStatus(dto.getStatus());
             user.setMfaEnabled(dto.isMfaEnabled());
             user.setVerifyMail(dto.isVerifyMail());
@@ -228,6 +233,13 @@ public class UserServiceImpl implements UserService {
         String url = imageService.getDirImage(user.getAvatar(), Global.AVATAR_DIR);
 
         return UploadImageResponse.builder().url(url).build();
+    }
+
+    @Override
+    public ProfileResponse getProfile() {
+        String email = UserDetailsServiceImpl.getEmailLoggedIn();
+        User user = findFirstByEmail(email);
+        return UserMapper.toProfileDto(user);
     }
 
 }
