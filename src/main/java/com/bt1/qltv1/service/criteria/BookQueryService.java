@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
 import javax.persistence.criteria.JoinType;
+import java.util.Set;
 
 @Service
 @Log4j
@@ -33,13 +34,28 @@ public class BookQueryService extends QueryService<Book> {
         return bookRepository.findAll(specification, page);
     }
 
+    public Page<Book> findBookBorrowByCriteria(BookCriteria bookcriteria, Set<Long> genreIds, Pageable page) {
+        log.debug("find by criteria : {}", bookcriteria);
+        Specification<Book> specification = createSpecification(bookcriteria);
+        if (!genreIds.isEmpty()) {
+            specification = specification.and(setIgnoreGenre(genreIds));
+        }
+        return bookRepository.findAll(specification, page);
+    }
+
     public long countByCriteria(BookCriteria bookcriteria, BaseCriteria baseCriteria) {
         final Specification<Book> specification = createSpecification(bookcriteria)
                 .and(baseQueryService.createSpecification(baseCriteria));
         return bookRepository.count(specification);
     }
 
-    public Specification<Book> setAvailable(boolean available){
+    public Specification<Book> setIgnoreGenre(Set<Long> genreIds) {
+        return (root, query, builder) -> builder
+                .not(root.join(Book_.genreId, JoinType.LEFT).get(Genre_.id)
+                        .in(genreIds));
+    }
+
+    public Specification<Book> setAvailable(boolean available) {
         return (root, query, builder) -> builder.equal(root.get(Book_.AVAILABLE), available);
     }
 
