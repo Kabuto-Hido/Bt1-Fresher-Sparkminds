@@ -24,7 +24,7 @@ public class UserDTO extends BaseEntity {
     private Long id;
     @Size(min = 3, max = 50, message = "{user.full-name.invalid}")
     private String fullname;
-    @Email(message = "Please enter the valid email")
+    @Email(message = "{user.email.invalid}")
     private String email;
     @Phone
     private String phone;

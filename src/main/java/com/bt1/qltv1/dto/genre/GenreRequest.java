@@ -12,6 +12,6 @@ import javax.validation.constraints.NotBlank;
 @ToString
 public class GenreRequest {
     private Long id;
-    @NotBlank(message = "Genre name can not be null")
+    @NotBlank(message = "{genre.name.null}")
     private String name;
 }

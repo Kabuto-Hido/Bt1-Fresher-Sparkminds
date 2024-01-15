@@ -1,9 +1,11 @@
 package com.bt1.qltv1.service.criteria;
 
+import com.bt1.qltv1.criteria.BaseCriteria;
 import com.bt1.qltv1.criteria.BookCriteria;
-import com.bt1.qltv1.criteria.UserCriteria;
-import com.bt1.qltv1.entity.*;
-import com.bt1.qltv1.exception.BadRequest;
+import com.bt1.qltv1.entity.Author_;
+import com.bt1.qltv1.entity.Book;
+import com.bt1.qltv1.entity.Book_;
+import com.bt1.qltv1.entity.Genre_;
 import com.bt1.qltv1.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -15,9 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
 import javax.persistence.criteria.JoinType;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 @Service
 @Log4j
@@ -25,20 +24,27 @@ import java.time.format.DateTimeParseException;
 @RequiredArgsConstructor
 public class BookQueryService extends QueryService<Book> {
     private final BookRepository bookRepository;
+    private final BaseQueryService<Book> baseQueryService;
 
-    public Page<Book> findByCriteria(BookCriteria criteria, Pageable page) {
-        log.debug("find by criteria : {}", criteria);
-        Specification<Book> specification = createSpecification(criteria);
+    public Page<Book> findByCriteria(BookCriteria bookcriteria, BaseCriteria baseCriteria, Pageable page) {
+        log.debug("find by criteria : {}", bookcriteria);
+        Specification<Book> specification = createSpecification(bookcriteria)
+                .and(baseQueryService.createSpecification(baseCriteria));
         return bookRepository.findAll(specification, page);
     }
 
-    public long countByCriteria(BookCriteria criteria) {
-        final Specification<Book> specification = createSpecification(criteria);
+    public long countByCriteria(BookCriteria bookcriteria, BaseCriteria baseCriteria) {
+        final Specification<Book> specification = createSpecification(bookcriteria)
+                .and(baseQueryService.createSpecification(baseCriteria));
         return bookRepository.count(specification);
     }
 
+    public Specification<Book> setAvailable(boolean available){
+        return (root, query, builder) -> builder.equal(root.get(Book_.AVAILABLE), available);
+    }
+
     protected Specification<Book> createSpecification(BookCriteria criteria) {
-        Specification<Book> specification = Specification.where(null);
+        Specification<Book> specification = Specification.where(setAvailable(true));
         if (criteria != null) {
             if (criteria.getDistinct() != null) {
                 specification = specification.and(distinct(criteria.getDistinct()));
@@ -59,9 +65,6 @@ public class BookQueryService extends QueryService<Book> {
             if (criteria.getQuantity() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getQuantity(), Book_.quantity));
             }
-            if (criteria.getAvailable() != null) {
-                specification = specification.and(buildSpecification(criteria.getAvailable(), Book_.available));
-            }
             if (criteria.getPrice() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getPrice(), Book_.price));
             }
@@ -80,34 +83,8 @@ public class BookQueryService extends QueryService<Book> {
                                 root -> root.join(Book_.genreId, JoinType.LEFT).get(Genre_.id))
                 );
             }
-            if(criteria.getFromTime()!= null) {
-                try {
-                    LocalDateTime from = fromString(criteria.getFromTime());
-                    specification = specification.and((root, query, criteriaBuilder)
-                            -> criteriaBuilder.greaterThanOrEqualTo(root.get(BaseEntity_.createdDate),
-                            from));
-                }catch (DateTimeParseException ex){
-                   throw new BadRequest("Please enter right format of date ddMMyyyy HHmmss",
-                           "get-book.from-date.invalid");
-                }
-            }
-
-            if(criteria.getToTime()!= null) {
-                try {
-                    LocalDateTime to = fromString(criteria.getFromTime());
-                    specification = specification.and((root, query, criteriaBuilder)
-                            -> criteriaBuilder.lessThanOrEqualTo(root.get(BaseEntity_.createdDate),
-                            to));
-                }catch (DateTimeParseException ex){
-                    throw new BadRequest("Please enter right format of date ddMMyyyy HHmmss",
-                            "get-book.from-date.invalid");
-                }
-            }
         }
         return specification;
     }
 
-    private LocalDateTime fromString(String dateTime) throws DateTimeParseException {
-        return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("ddMMyyyy HHmmss"));
-    }
 }

@@ -2,8 +2,6 @@ package com.bt1.qltv1.controller.admin;
 
 
 import com.bt1.qltv1.dto.SuccessResponseDTO;
-import com.bt1.qltv1.dto.author.AuthorRequest;
-import com.bt1.qltv1.dto.author.AuthorResponse;
 import com.bt1.qltv1.dto.genre.GenreRequest;
 import com.bt1.qltv1.dto.genre.GenreResponse;
 import com.bt1.qltv1.service.GenreService;
@@ -23,7 +21,7 @@ public class GenreManagementController {
     public ResponseEntity<SuccessResponseDTO> createNewGenre(@Valid @RequestBody
                                                              GenreRequest request) {
         genreService.save(request);
-        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.CREATED,
                 "Add new genre successful!"));
     }
 

@@ -21,7 +21,7 @@ public class RegisterController {
     @PostMapping("/register")
     public ResponseEntity<SuccessResponseDTO> registerNewUser(@Valid @RequestBody RegisterRequest registerRequest) {
         registerService.register(registerRequest);
-        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.CREATED,
                 "Create account successful!" +
                         " Please check your email to activated your account!"));
     }

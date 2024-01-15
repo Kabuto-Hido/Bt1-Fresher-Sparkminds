@@ -12,6 +12,6 @@ import javax.validation.constraints.Email;
 @Builder
 @Data
 public class SendMailRequest {
-    @Email(message = "Please enter the valid email")
+    @Email(message = "{user.email.invalid}")
     private String email;
 }

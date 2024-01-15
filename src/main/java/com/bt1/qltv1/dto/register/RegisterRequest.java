@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @Data
 
 public class RegisterRequest extends BaseEntity {
-    @Size(min = 3, max = 50, message = "{user.full-name.invalid}")
+    @Size(min = 1, max = 100, message = "{user.full-name.invalid}")
     private String fullname;
 
     @Email(message = "{user.email.invalid}")

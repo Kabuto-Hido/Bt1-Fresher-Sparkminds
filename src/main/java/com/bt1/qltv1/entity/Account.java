@@ -1,12 +1,14 @@
 package com.bt1.qltv1.entity;
 
 import com.bt1.qltv1.enumeration.UserStatus;
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -24,53 +26,58 @@ import java.util.Set;
 @Table(name = "account")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Account extends BaseEntity {
+    @CsvIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name should not be null")
+    @CsvBindByName(column = "Fullname", required = true)
+    @NotNull(message = "{account.full-name.null}")
     @Column(name = "fullname", length = 100, nullable = false)
     private String fullName;
 
-    @Email(message = "Please enter the valid email")
+    @CsvBindByName(column = "Email", required = true)
+    @Email(message = "{user.email.invalid}")
     @Column(name = "email", unique = true)
     private String email;
 
-    @NotBlank(message = "Password should not be null")
+    @CsvIgnore
+    @NotNull(message = "{user.password.null}")
     @Column(name = "password", nullable = false)
     private String password;
 
     //Wrong number of login attempts
+    @CsvIgnore
     @Column(name = "failed_attempt")
     @Builder.Default
     private int failedAttempt = 0;
 
     //account lock period
+    @CsvIgnore
     @Column(name = "lock_time")
     private LocalDateTime lockTime;
 
+    @CsvIgnore
     @Column(name="status")
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
-    @Column(name = "otp", length = 6)
-    private String otp;
-
-    @Column(name = "otp_expired")
-    private LocalDateTime otpExpired;
-
+    @CsvIgnore
     @Column(name = "mfa_enabled")
     @Builder.Default
     private boolean mfaEnabled = false;
 
+    @CsvIgnore
     @Column(name = "secret")
     private String secret;
 
+    @CsvIgnore
     @Column(name = "verify_mail")
     @Builder.Default
     private boolean verifyMail = false;
 
+    @CsvIgnore
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "accounts_roles", // table link two relationship
             joinColumns = @JoinColumn(name = "acc_id"), // Key is link with table Accounts
@@ -79,9 +86,15 @@ public class Account extends BaseEntity {
     private Set<Role> roleSet = new HashSet<>();
 
     //relationship with session account
+    @CsvIgnore
     @OneToMany(mappedBy = "accountId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Session> listSession = new ArrayList<>();
+
+    @CsvIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Otp> listOtp = new ArrayList<>();
 
     public boolean isActive(){
         return this.getStatus().equals(UserStatus.ACTIVE);

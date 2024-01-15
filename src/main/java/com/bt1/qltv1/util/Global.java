@@ -13,6 +13,9 @@ public class Global {
     public static final int MAX_FAILED_ATTEMPTS = 3;
     public static final long LOCK_TIME_DURATION = 1800000;   //30 MINUTES
     public static final String DEFAULT_IMAGE = "https://cptudong.vmts.vn/content/images/thumbs/default-image_450.png";
+    public static final String PROJECT_DIR = "D:/intelliJ/qltv1";
+    public static final String AVATAR_DIR = "src/main/resources/static/images/avatars";
+    public static final String BOOK_DIR = "src/main/resources/static/images/books";
     public static String randomNumber() {
         return UUID.randomUUID().toString().replace("-", "");
 

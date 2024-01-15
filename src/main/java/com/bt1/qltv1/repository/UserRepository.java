@@ -26,10 +26,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Query("update User u set u.secret = ?2, u.mfaEnabled = true where u.email = ?1")
     int enableMfa(String email, String secret);
 
-    @Modifying
-    @Transactional
-    @Query("update User u set u.verifyMail = true, u.otp = null, u.otpExpired = null where u.email = ?1")
-    void activateAccount(String email);
-
     Optional<User> findFirstByEmailAndVerifyMail(String email, boolean isVerify);
 }

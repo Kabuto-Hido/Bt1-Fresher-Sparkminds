@@ -13,10 +13,10 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @Builder
 public class ChangePasswordRequest {
-    @NotNull(message = "Password may be not null")
+    @NotNull(message = "{user.password.null}")
     private String oldPassword;
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[#$@!%&*?])[A-Za-z\\d#$@!%&*?]{8,}$",
             message = "{user.password.weak}")
-    @NotNull(message = "Password may be not null")
+    @NotNull(message = "{user.new-password.null}")
     private String newPassword;
 }

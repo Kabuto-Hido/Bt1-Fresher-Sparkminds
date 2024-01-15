@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class LoginRequest {
     @Email(message = "{user.email.invalid}")
     private String email;
-    @NotNull(message = "Please enter password")
+    @NotNull(message = "{user.password.null}")
     private String password;
     private String code;
 }

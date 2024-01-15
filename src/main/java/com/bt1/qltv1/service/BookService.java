@@ -1,5 +1,6 @@
 package com.bt1.qltv1.service;
 
+import com.bt1.qltv1.criteria.BaseCriteria;
 import com.bt1.qltv1.criteria.BookCriteria;
 import com.bt1.qltv1.dto.ListOutputResult;
 import com.bt1.qltv1.dto.book.BookRequest;
@@ -12,9 +13,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface BookService {
-    ListOutputResult findAllBook(BookCriteria bookCriteria, Pageable pageable);
+    ListOutputResult findAllBook(BookCriteria bookCriteria, BaseCriteria baseCriteria,
+                                 Pageable pageable);
 
-    BookResponse save(BookRequest bookRequest);
+    BookResponse save(BookRequest bookRequest, MultipartFile image);
     void deleteById(long id);
-    UploadImageResponse uploadImage(long id, MultipartFile image);
+
+    void importBookByCsv(MultipartFile file);
+
+    UploadImageResponse uploadBookImage(long id, MultipartFile image);
+
+    void deleteBookImage(long id);
+
+    UploadImageResponse getBookImage(long id);
 }

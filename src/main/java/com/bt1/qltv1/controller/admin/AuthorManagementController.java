@@ -20,7 +20,7 @@ public class AuthorManagementController {
     public ResponseEntity<SuccessResponseDTO> createNewAuthor(@Valid @RequestBody
                                                                   AuthorRequest request) {
         authorService.save(request);
-        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.CREATED,
                 "Add new author successful!"));
     }
 

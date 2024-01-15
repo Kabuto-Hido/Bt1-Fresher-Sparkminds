@@ -20,13 +20,10 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
     private StringFilter title;
     private StringFilter description;
     private IntegerFilter quantity;
-    private BooleanFilter available;
     private BigDecimalFilter price;
     private BigDecimalFilter loanFee;
     private LongFilter authorId;
     private LongFilter genreId;
-    private String fromTime;
-    private String toTime;
     private Boolean distinct;
 
     private BookCriteria(BookCriteria other){
@@ -37,11 +34,8 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
         this.quantity = other.quantity == null ? null : other.quantity.copy();
         this.price = other.price == null ? null : other.price.copy();
         this.loanFee = other.loanFee == null ? null : other.loanFee.copy();
-        this.available = other.available == null ? null : other.available.copy();
         this.authorId = other.authorId == null ? null : other.authorId.copy();
         this.genreId = other.genreId == null ? null : other.genreId.copy();
-        this.fromTime = other.fromTime;
-        this.toTime = other.toTime;
         this.distinct = other.distinct;
     }
 
@@ -108,12 +102,6 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
         return loanFee;
     }
 
-    public BooleanFilter available(){
-        if (available == null){
-            available = new BooleanFilter();
-        }
-        return available;
-    }
     @Override
     public Criteria copy() {
         return new BookCriteria(this);
@@ -128,20 +116,16 @@ public class BookCriteria extends Throwable implements Serializable, Criteria {
                 && Objects.equals(getTitle(), that.getTitle())
                 && Objects.equals(getDescription(), that.getDescription())
                 && Objects.equals(getQuantity(), that.getQuantity())
-                && Objects.equals(getAvailable(), that.getAvailable())
                 && Objects.equals(getPrice(), that.getPrice())
                 && Objects.equals(getLoanFee(), that.getLoanFee())
                 && Objects.equals(getAuthorId(), that.getAuthorId())
                 && Objects.equals(getGenreId(), that.getGenreId())
-                && Objects.equals(getDistinct(), that.getDistinct())
-                && Objects.equals(getFromTime(), that.getFromTime())
-                && Objects.equals(getToTime(), that.getToTime());
+                && Objects.equals(getDistinct(), that.getDistinct());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getIsbn(), getTitle(), getDescription(), getQuantity(),
-                getAvailable(), getPrice(), getLoanFee(), getAuthorId(), getGenreId(), getDistinct(),
-                getFromTime(), getToTime());
+        return Objects.hash(getId(), getIsbn(), getTitle(), getDescription(), getQuantity()
+                , getPrice(), getLoanFee(), getAuthorId(), getGenreId(), getDistinct());
     }
 }

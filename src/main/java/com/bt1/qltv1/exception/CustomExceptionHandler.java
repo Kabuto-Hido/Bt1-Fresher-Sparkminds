@@ -24,7 +24,7 @@ public class CustomExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> handlerException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(ex.getMessage(),""));
+                .body(new ErrorResponse(ex.getMessage(), ""));
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -38,14 +38,14 @@ public class CustomExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<ErrorResponse> handleTokenException(TokenException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse( ex.getMessage(), ex.getErrorCode()));
+                .body(new ErrorResponse(ex.getMessage(), ex.getErrorCode()));
     }
 
     @ExceptionHandler(BadRequest.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handlerBadRequest(BadRequest ex, WebRequest req) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(ex.getMessage(),ex.getErrorCode()));
+                .body(new ErrorResponse(ex.getMessage(), ex.getErrorCode()));
     }
 
     @ExceptionHandler(MfaException.class)
@@ -69,8 +69,12 @@ public class CustomExceptionHandler {
             ConstraintViolationException ex) {
         List<ViolationResponse> errors = new ArrayList<>();
         for (ConstraintViolation violation : ex.getConstraintViolations()) {
+            String code = violation.getRootBeanClass().getSimpleName() + "."
+                    + violation.getPropertyPath() + ".invalid";
+
             errors.add(new ViolationResponse(violation.getPropertyPath().toString()
-                    , violation.getMessage(),""));
+                    , violation.getMessage(), code));
+
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errors);
@@ -79,17 +83,15 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<List<ViolationResponse>> handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException ex){
+            MethodArgumentNotValidException ex) {
         List<ViolationResponse> errors = new ArrayList<>();
-        StringBuilder code= new StringBuilder();
 
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            code.append(fieldError.getObjectName()).append(".")
-                    .append(fieldError.getField()).append(".invalid");
-
+            String code = fieldError.getObjectName() + "."
+                    + fieldError.getField() + ".invalid";
+            System.out.println(code);
             errors.add(new ViolationResponse(fieldError.getField(),
-                    fieldError.getDefaultMessage(), code.toString()));
-            code.setLength(0);
+                    fieldError.getDefaultMessage(), code));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errors);
@@ -98,6 +100,6 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxSizeException(MaxUploadSizeExceededException exc) {
         return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
-                .body(new ErrorResponse(exc.getMessage(),"file.size.invalid"));
+                .body(new ErrorResponse(exc.getMessage(), "file.size.invalid"));
     }
 }

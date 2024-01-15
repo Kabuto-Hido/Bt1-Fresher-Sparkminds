@@ -6,7 +6,6 @@ import com.bt1.qltv1.dto.auth.RefreshTokenRequest;
 import com.bt1.qltv1.dto.auth.RefreshTokenResponse;
 import com.bt1.qltv1.entity.Account;
 import com.bt1.qltv1.entity.Session;
-import com.bt1.qltv1.entity.User;
 import com.bt1.qltv1.enumeration.SessionStatus;
 import com.bt1.qltv1.exception.BadRequest;
 import com.bt1.qltv1.exception.MfaException;
@@ -20,13 +19,12 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.HashSet;
 
 @Service
 @Log4j
@@ -34,7 +32,6 @@ import java.util.Set;
 public class AuthService {
     private final SessionService sessionService;
     private final JwtUtil jwtUtil;
-    private final UserService userService;
     private final MfaService mfaService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
@@ -56,7 +53,6 @@ public class AuthService {
 
         //check valid email
         Account account = accountService.findFirstByEmail(loginRequest.getEmail());
-//        User user = userService.findFirstByEmail(loginRequest.getEmail());
 
         //check is account enable MFA
         if(account.isMfaEnabled() && (!mfaService.verifyOtp(account.getSecret(),
@@ -83,7 +79,7 @@ public class AuthService {
         LoginResponse loginResponse = LoginResponse
                 .builder().accessToken(accessToken).refreshToken(refreshToken)
                 .username(loginRequest.getEmail()).id(account.getId())
-                .role((Set<GrantedAuthority>) userDetails.getAuthorities()).build();
+                .role(new HashSet<>(userDetails.getAuthorities())).build();
 
         log.info(loginResponse);
 

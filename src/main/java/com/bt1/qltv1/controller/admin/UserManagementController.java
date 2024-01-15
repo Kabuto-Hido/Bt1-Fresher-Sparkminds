@@ -1,5 +1,6 @@
 package com.bt1.qltv1.controller.admin;
 
+import com.bt1.qltv1.criteria.BaseCriteria;
 import com.bt1.qltv1.criteria.UserCriteria;
 import com.bt1.qltv1.dto.ListOutputResult;
 import com.bt1.qltv1.dto.SuccessResponseDTO;
@@ -28,14 +29,15 @@ public class UserManagementController {
 
     @GetMapping("/users")
     public ResponseEntity<ListOutputResult> getAllUser(UserCriteria userCriteria,
+                                                       BaseCriteria baseCriteria,
                                                        @PageableDefault(sort = Global.DEFAULT_SORT_BY,
                                                                direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(userService.findAllUser(userCriteria, pageable));
+        return ResponseEntity.ok(userService.findAllUser(userCriteria, baseCriteria, pageable));
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<ProfileResponse> getUserById(@NotNull(message = "Id can be not null")
-                                                   @PathVariable long id){
+                                                       @PathVariable long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
@@ -61,10 +63,10 @@ public class UserManagementController {
     }
 
     @PostMapping("/users/upload-csv")
-    public ResponseEntity<SuccessResponseDTO> uploadFile(@RequestParam MultipartFile file) {
+    public ResponseEntity<SuccessResponseDTO> insertNewUserByFile(@RequestParam MultipartFile file) {
         userService.importUserByCsv(file);
         return ResponseEntity.ok(new SuccessResponseDTO(
-                HttpStatus.OK,
-                "Update file " + file.getOriginalFilename() + " successful"));
+                HttpStatus.CREATED,
+                "Import user in file " + file.getOriginalFilename() + " successful"));
     }
 }

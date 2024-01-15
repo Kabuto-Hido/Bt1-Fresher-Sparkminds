@@ -15,10 +15,16 @@
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/init_session_schema.xml"
              relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/init_otp_schema.xml"
+             relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/init_genre_schema.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/init_author_schema.xml"
              relativeToChangelogFile="false"/>
     <include file="classpath:db/changelog/init_book_schema.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/init_loan_schema.xml"
+             relativeToChangelogFile="false"/>
+    <include file="classpath:db/changelog/init_loan_detail_schema.xml"
              relativeToChangelogFile="false"/>
 </databaseChangeLog>
