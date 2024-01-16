@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,6 +27,10 @@ public class LoanDetail extends BaseEntity{
     @Min(value = 1, message = "{book.quantity.minimum}")
     @Builder.Default
     private Integer quantity = 1;
+
+    @Column(name = "actual_return_date")
+    private LocalDateTime actualReturnDate;
+
 
     @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;

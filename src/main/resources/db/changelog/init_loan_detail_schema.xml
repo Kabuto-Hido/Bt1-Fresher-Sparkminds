@@ -35,4 +35,10 @@
         <dropColumn tableName="loan_detail" columnName="total_price"/>
         <modifyDataType tableName="loan_detail" columnName="unit_price" newDataType="decimal(10,2)"/>
     </changeSet>
+
+    <changeSet id="addReturnColumn-loan-detail" author="liquibase">
+        <addColumn tableName="loan_detail">
+            <column name="actual_return_date" type="datetime"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

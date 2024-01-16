@@ -24,6 +24,8 @@ public class LoanMapper {
                 .userId(loan.getUser().getId())
                 .loanDetails(loanDetailResponses)
                 .createdDate(loan.getCreatedDate())
+                .modifiedBy(loan.getModifiedBy())
+                .modifiedDate(loan.getModifiedDate())
                 .createdBy(loan.getCreatedBy())
                 .build();
     }

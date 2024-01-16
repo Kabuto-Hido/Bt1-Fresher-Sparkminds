@@ -14,4 +14,6 @@ public interface BorrowService {
     BorrowResponse borrowBook(BorrowRequest borrowRequest);
 
     void confirmBorrowBook(long loanId);
+
+    void cancelBorrowBook(long loanId);
 }

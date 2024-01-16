@@ -49,7 +49,6 @@ public class Book extends BaseEntity{
 
     @CsvBindByName(column = "Quantity", required = true)
     @Column(name = "quantity", nullable = false)
-    @Min(value = 1, message = "{book.quantity.minimum}")
     @Builder.Default
     private Integer quantity = 1;
 

@@ -46,4 +46,12 @@ public class BorrowController {
         return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
                 "Borrow book successful!"));
     }
+
+    @DeleteMapping("/book/borrow/loan/{id}")
+    public ResponseEntity<SuccessResponseDTO> cancelBorrowBook(@NotNull(message = "Loan id can be not null")
+                                                                @PathVariable long id) {
+        borrowService.cancelBorrowBook(id);
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                "Cancel borrow book successful!"));
+    }
 }

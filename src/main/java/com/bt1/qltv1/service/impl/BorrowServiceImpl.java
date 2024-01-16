@@ -124,15 +124,19 @@ public class BorrowServiceImpl implements BorrowService {
                     new NotFoundException("Not found book with id " + bb.getId(),
                             "borrow-book.id-book.not-exist"));
 
-            if(bookIdInLoanDetail.contains(bb.getId())){
-                throw new BadRequest("You have already borrowed this book id "+bb.getId()
-                        ,"borrow-book.id-book.invalid");
+            if (bookIdInLoanDetail.contains(bb.getId())) {
+                throw new BadRequest("You have already borrowed this book id " + bb.getId()
+                        , "borrow-book.id-book.invalid");
+            }
+
+            if (!book.isInStock()) {
+                throw new BadRequest("The book is out stock", "borrow-book.status.out-stock");
             }
 
             //if quantity of book borrow larger than quantity of book in stock
             //throw exception
             if (bb.getQuantity() > book.getQuantity()) {
-                throw new BadRequest(String.format("The max quantity of book id %s is %s",book.getId(), book.getQuantity()),
+                throw new BadRequest(String.format("The max quantity of book id %s is %s", book.getId(), book.getQuantity()),
                         "borrow-book.book-quantity.invalid");
             }
 
@@ -163,6 +167,11 @@ public class BorrowServiceImpl implements BorrowService {
         } catch (DateTimeParseException ex) {
             throw new BadRequest("Please enter right format of date ddMMyyyy HHmmss",
                     "borrow-book.return-date.invalid");
+        }
+
+        if (!isValidReturnDate(returnDate)) {
+            throw new BadRequest("Please update the return date",
+                    "book-borrow.return-date.expired");
         }
 
         Loan loan = Loan.builder().returnDate(returnDate)
@@ -199,26 +208,31 @@ public class BorrowServiceImpl implements BorrowService {
         return LoanMapper.toBorrowResponse(loan);
     }
 
-    private boolean isValidReturnDate(LocalDateTime returnDate){
+    private boolean isValidReturnDate(LocalDateTime returnDate) {
         LocalDateTime now = LocalDateTime.now();
-        return now.isAfter(returnDate);
+        return now.isBefore(returnDate);
     }
 
     @Transactional
     @Override
     public void confirmBorrowBook(long loanId) {
-        Loan confirmLoan = loanRepository.findById(loanId).orElseThrow(() ->
+        User user = getCurrentUser();
+        //check loan is belong is user and have status PENDING_BORROW
+        Loan confirmLoan = loanRepository.findByIdAndUserIdAndStatus(loanId, user.getId(),
+                LoanStatus.PENDING_BORROW).orElseThrow(() ->
                 new NotFoundException("Not found loan with id " + loanId,
                         "loan-confirm.id.not-exist"));
 
         //check return date
-        if(!isValidReturnDate(confirmLoan.getReturnDate())){
+        if (!isValidReturnDate(confirmLoan.getReturnDate())) {
             throw new BadRequest("Please update the return date",
                     "confirm-borrow.return-date.expired");
         }
 
         List<LoanDetail> loanDetailList = loanDetailRepository.findAllByLoanId(loanId)
                 .orElseThrow(() -> new NotFoundException("Not found loan detail", "loan-detail.loan-id.not-found"));
+
+        Set<Long> bookIdInLoanDetail = new HashSet<>(getIdBookInLoanDetail(user.getId()));
 
         String email = confirmLoan.getUser().getEmail();
         List<Book> updateBooks = new ArrayList<>();
@@ -227,6 +241,16 @@ public class BorrowServiceImpl implements BorrowService {
         for (LoanDetail ld : loanDetailList) {
             Book book = bookRepository.findById(ld.getBook().getId()).orElseThrow(() ->
                     new NotFoundException("Not found book", "book.id.invalid"));
+
+            if (bookIdInLoanDetail.contains(book.getId())) {
+                throw new BadRequest("You have already borrowed this book id " + book.getId()
+                        , "confirm-book.id-book.invalid");
+            }
+
+            //check book is out stock
+            if (!book.isInStock()) {
+                throw new BadRequest("The book is out stock", "borrow-book.status.out-stock");
+            }
 
             newQuantity = book.getQuantity() - ld.getQuantity();
             //check quantity book
@@ -240,6 +264,7 @@ public class BorrowServiceImpl implements BorrowService {
             if (newQuantity == 0) {
                 book.setInStock(false);
             }
+            book.setQuantity(newQuantity);
             updateBooks.add(book);
 
             EmailBook eb = EmailBook.builder()
@@ -267,6 +292,19 @@ public class BorrowServiceImpl implements BorrowService {
 
         confirmLoan.setPaid(true);
         confirmLoan.setStatus(LoanStatus.BORROW);
+        loanRepository.save(confirmLoan);
+    }
+
+    @Override
+    public void cancelBorrowBook(long loanId) {
+        User user = getCurrentUser();
+        //check loan is belong is user and have status PENDING_BORROW
+        Loan confirmLoan = loanRepository.findByIdAndUserIdAndStatus(loanId, user.getId(),
+                LoanStatus.PENDING_BORROW).orElseThrow(() ->
+                new NotFoundException("Not found loan with id " + loanId,
+                        "loan-confirm.id.not-exist"));
+
+        confirmLoan.setStatus(LoanStatus.CANCELED);
         loanRepository.save(confirmLoan);
     }
 

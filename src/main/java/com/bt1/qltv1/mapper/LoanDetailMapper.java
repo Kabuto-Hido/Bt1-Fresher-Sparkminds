@@ -24,6 +24,7 @@ public class LoanDetailMapper {
         String urlImage = imagePath.toAbsolutePath().toString();
 
         return BookReturnResponse.builder()
+                .loanId(loanDetail.getLoan().getId())
                 .bookId(loanDetail.getBook().getId())
                 .isbn(loanDetail.getBook().getIsbn())
                 .title(loanDetail.getBook().getTitle())

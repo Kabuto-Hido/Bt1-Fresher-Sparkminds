@@ -23,4 +23,6 @@ public interface LoanDetailRepository extends JpaRepository<LoanDetail, Long> {
     Page<LoanDetail> findByLoanUserIdAndLoanStatus(long userId, LoanStatus status, Pageable pageable);
 
     Optional<List<LoanDetail>> findAllByLoanId(long loanId);
+
+    Optional<LoanDetail> findFirstByLoanIdAndBookId(long loanId, long bookId);
 }
