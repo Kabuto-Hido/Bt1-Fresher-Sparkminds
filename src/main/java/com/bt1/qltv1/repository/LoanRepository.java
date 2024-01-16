@@ -16,7 +16,7 @@ import java.util.Optional;
 @Repository
 @EnableJpaRepositories
 public interface LoanRepository extends JpaRepository<Loan, Long> {
-    Optional<List<Loan>> findByUserIdAndStatus(long userId, LoanStatus status);
+    Optional<Loan> findByUserIdAndStatus(long userId, LoanStatus status);
 
     @Transactional
     @Modifying

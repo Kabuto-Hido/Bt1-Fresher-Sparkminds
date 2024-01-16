@@ -26,4 +26,7 @@
             <column name="modified_by" type="varchar(255)"/>
         </createTable>
     </changeSet>
+    <changeSet id="modifyStatusColumn-loan" author="liquibase">
+        <modifyDataType tableName="loan" columnName="status" newDataType="enum('RETURN', 'CANCELED','PENDING_RETURN','BORROW','PENDING_BORROW')"/>
+    </changeSet>
 </databaseChangeLog>

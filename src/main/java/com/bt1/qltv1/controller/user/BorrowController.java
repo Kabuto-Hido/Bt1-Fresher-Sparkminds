@@ -40,7 +40,7 @@ public class BorrowController {
     }
 
     @PutMapping("/book/borrow/loan/{id}")
-    public ResponseEntity<SuccessResponseDTO> confirmBorrowBook(@NotNull(message = "Id can be not null")
+    public ResponseEntity<SuccessResponseDTO> confirmBorrowBook(@NotNull(message = "Loan id can be not null")
                                                                     @PathVariable long id) {
         borrowService.confirmBorrowBook(id);
         return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,

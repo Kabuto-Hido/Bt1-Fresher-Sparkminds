@@ -35,6 +35,7 @@ public class BookMapper {
                 .isbn(book.getIsbn())
                 .author(author)
                 .genre(genre)
+                .inStock(book.isInStock())
                 .image(book.getImage())
                 .title(book.getTitle())
                 .available(book.isAvailable())

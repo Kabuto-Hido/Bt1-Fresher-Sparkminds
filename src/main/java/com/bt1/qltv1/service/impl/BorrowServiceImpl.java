@@ -60,35 +60,33 @@ public class BorrowServiceImpl implements BorrowService {
                         "get-book-borrow.email.not-exist"));
     }
 
-    private Set<Long> getIdGenreInLoanDetail(long userId) {
+    private List<Long> getIdBookInLoanDetail(long userId) {
         //get loan detail that user doesn't return book
         List<LoanDetail> loanDetails =
-                loanDetailRepository.findByUserIdAndNotInStatus(userId,
-                        LoanStatus.RETURN).orElse(Collections.emptyList());
+                loanDetailRepository.findByUserIdAndStatus(userId,
+                        LoanStatus.BORROW);
 
         //get genre from book in loan detail
-        Set<Long> idGenreInLoanDetailSet = new HashSet<>();
+        List<Long> idBookInLoanDetailSet = new ArrayList<>();
         if (loanDetails.isEmpty()) {
-            idGenreInLoanDetailSet.add(0L);
-            return idGenreInLoanDetailSet;
+            idBookInLoanDetailSet.add(0L);
+            return idBookInLoanDetailSet;
         }
 
-        idGenreInLoanDetailSet = loanDetails.stream().map(loanDetail ->
-                loanDetail.getBook().getGenreId().getId()
-        ).collect(Collectors.toSet());
-
-        return idGenreInLoanDetailSet;
-
+        idBookInLoanDetailSet = loanDetails.stream().map(loanDetail ->
+                loanDetail.getBook().getId()
+        ).toList();
+        return idBookInLoanDetailSet;
     }
 
     @Override
     public ListOutputResult getBookCanBorrow(BookCriteria bookCriteria, Pageable pageable) {
         User user = getCurrentUser();
-        //get genre from book in loan have status BORROW, PENDING
-        Set<Long> genreIds = getIdGenreInLoanDetail(user.getId());
+        //get id book in loan have status BORROW
+        List<Long> bookIds = getIdBookInLoanDetail(user.getId());
 
-        //get all book that don't have genre in loan
-        Page<Book> bookBorrowPage = bookQueryService.findBookBorrowByCriteria(bookCriteria, genreIds,
+        //get all book that ignore book in loan has status BORROW
+        Page<Book> bookBorrowPage = bookQueryService.findBookCanBorrowByCriteria(bookCriteria, bookIds,
                 pageable);
 
         return resultPaging(bookBorrowPage);
@@ -113,23 +111,29 @@ public class BorrowServiceImpl implements BorrowService {
         if (books.hasPrevious()) {
             result.setPreviousPage((long) books.previousPageable().getPageNumber() + 1);
         }
-
         return result;
     }
 
     public void checkBookRequest(BorrowRequest request, long userId) {
         List<BookBorrow> bookBorrows = request.getBookBorrowList();
         List<Long> idGenreRequest = new ArrayList<>();
+        Set<Long> bookIdInLoanDetail = new HashSet<>(getIdBookInLoanDetail(userId));
+
         for (BookBorrow bb : bookBorrows) {
             Book book = bookRepository.findById(bb.getId()).orElseThrow(() ->
                     new NotFoundException("Not found book with id " + bb.getId(),
-                            "borrow-book.id.not-exist"));
+                            "borrow-book.id-book.not-exist"));
+
+            if(bookIdInLoanDetail.contains(bb.getId())){
+                throw new BadRequest("You have already borrowed this book id "+bb.getId()
+                        ,"borrow-book.id-book.invalid");
+            }
 
             //if quantity of book borrow larger than quantity of book in stock
             //throw exception
             if (bb.getQuantity() > book.getQuantity()) {
-                throw new BadRequest("The max quantity is " + book.getQuantity(),
-                        "book-borrow.quantity.invalid");
+                throw new BadRequest(String.format("The max quantity of book id %s is %s",book.getId(), book.getQuantity()),
+                        "borrow-book.book-quantity.invalid");
             }
 
             idGenreRequest.add(book.getGenreId().getId());
@@ -138,16 +142,6 @@ public class BorrowServiceImpl implements BorrowService {
         Set<Long> idGenreRequestSet = new HashSet<>(idGenreRequest);
         if (idGenreRequestSet.size() < idGenreRequest.size()) {
             throw new BadRequest("You can only borrow 1 book of each genre",
-                    "borrow-book.genre.duplicate");
-        }
-
-
-        //get genre that book user borrow but didnt return
-        Set<Long> genreIdInLoanDetail = getIdGenreInLoanDetail(userId);
-        genreIdInLoanDetail.retainAll(idGenreRequestSet);
-
-        if (!genreIdInLoanDetail.isEmpty()) {
-            throw new BadRequest("You have a book that match genre of book you didnt return",
                     "borrow-book.genre.duplicate");
         }
     }
@@ -171,9 +165,7 @@ public class BorrowServiceImpl implements BorrowService {
                     "borrow-book.return-date.invalid");
         }
 
-        //create loan
-        Loan loan = Loan.builder()
-                .returnDate(returnDate)
+        Loan loan = Loan.builder().returnDate(returnDate)
                 .user(currentUser)
                 .build();
         loan = loanRepository.save(loan);
@@ -207,6 +199,11 @@ public class BorrowServiceImpl implements BorrowService {
         return LoanMapper.toBorrowResponse(loan);
     }
 
+    private boolean isValidReturnDate(LocalDateTime returnDate){
+        LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(returnDate);
+    }
+
     @Transactional
     @Override
     public void confirmBorrowBook(long loanId) {
@@ -214,17 +211,35 @@ public class BorrowServiceImpl implements BorrowService {
                 new NotFoundException("Not found loan with id " + loanId,
                         "loan-confirm.id.not-exist"));
 
+        //check return date
+        if(!isValidReturnDate(confirmLoan.getReturnDate())){
+            throw new BadRequest("Please update the return date",
+                    "confirm-borrow.return-date.expired");
+        }
+
         List<LoanDetail> loanDetailList = loanDetailRepository.findAllByLoanId(loanId)
                 .orElseThrow(() -> new NotFoundException("Not found loan detail", "loan-detail.loan-id.not-found"));
 
         String email = confirmLoan.getUser().getEmail();
         List<Book> updateBooks = new ArrayList<>();
         List<EmailBook> emailBooks = new ArrayList<>();
+        int newQuantity;
         for (LoanDetail ld : loanDetailList) {
             Book book = bookRepository.findById(ld.getBook().getId()).orElseThrow(() ->
                     new NotFoundException("Not found book", "book.id.invalid"));
 
-            book.setQuantity(book.getQuantity() - ld.getQuantity());
+            newQuantity = book.getQuantity() - ld.getQuantity();
+            //check quantity book
+            if (newQuantity < 0) {
+                throw new BadRequest(String.
+                        format("There are only %s books %s left in stock", book.getQuantity(), book.getTitle())
+                        , "confirm-borrow.quantity.out-stock");
+            }
+
+            //if quantity = 0 make change status is not enable
+            if (newQuantity == 0) {
+                book.setInStock(false);
+            }
             updateBooks.add(book);
 
             EmailBook eb = EmailBook.builder()
@@ -253,7 +268,6 @@ public class BorrowServiceImpl implements BorrowService {
         confirmLoan.setPaid(true);
         confirmLoan.setStatus(LoanStatus.BORROW);
         loanRepository.save(confirmLoan);
-
     }
 
     public void sendMailBorrowBook(String mailTo, EmailBorrow emailBorrow) {

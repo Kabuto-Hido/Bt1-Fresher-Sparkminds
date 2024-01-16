@@ -58,6 +58,11 @@ public class Book extends BaseEntity{
     @Builder.Default
     private boolean available = true;
 
+    @CsvIgnore
+    @Column(name = "in_stock")
+    @Builder.Default
+    private boolean inStock = true;
+
     @CsvBindByName(column = "Price", required = true)
     @NotNull(message = "{book.price.null}")
     @Column(name = "price")

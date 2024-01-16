@@ -43,4 +43,10 @@
         <modifyDataType tableName="book" columnName="price" newDataType="decimal(10,2)"/>
         <modifyDataType tableName="book" columnName="loan_fee" newDataType="decimal(10,2)"/>
     </changeSet>
+
+    <changeSet id="addInStockColumn-Book" author="liquibase">
+        <addColumn tableName="book">
+            <column name="in_stock" type="boolean" defaultValueBoolean="true"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

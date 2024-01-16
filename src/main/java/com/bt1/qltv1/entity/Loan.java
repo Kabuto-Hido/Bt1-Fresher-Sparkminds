@@ -34,7 +34,7 @@ public class Loan extends BaseEntity{
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private LoanStatus status = LoanStatus.PENDING;
+    private LoanStatus status = LoanStatus.PENDING_BORROW;
 
     @Column(name = "paid")
     @Builder.Default
