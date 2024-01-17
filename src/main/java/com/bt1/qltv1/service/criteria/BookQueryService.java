@@ -2,10 +2,8 @@ package com.bt1.qltv1.service.criteria;
 
 import com.bt1.qltv1.criteria.BaseCriteria;
 import com.bt1.qltv1.criteria.BookCriteria;
-import com.bt1.qltv1.entity.Author_;
-import com.bt1.qltv1.entity.Book;
-import com.bt1.qltv1.entity.Book_;
-import com.bt1.qltv1.entity.Genre_;
+import com.bt1.qltv1.entity.*;
+import com.bt1.qltv1.enumeration.LoanStatus;
 import com.bt1.qltv1.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -17,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tech.jhipster.service.QueryService;
 
 import javax.persistence.criteria.JoinType;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Log4j
@@ -33,13 +33,31 @@ public class BookQueryService extends QueryService<Book> {
         return bookRepository.findAll(specification, page);
     }
 
+    public Page<Book> findBookCanBorrowByCriteria(BookCriteria bookcriteria, List<Long> ids, Pageable page) {
+        log.debug("find by criteria : {}", bookcriteria);
+        Specification<Book> specification = createSpecification(bookcriteria)
+                .and(setInStock(true));
+        if (!ids.isEmpty()) {
+            specification = specification.and(setIgnoreIds(ids));
+        }
+        return bookRepository.findAll(specification, page);
+    }
+
     public long countByCriteria(BookCriteria bookcriteria, BaseCriteria baseCriteria) {
         final Specification<Book> specification = createSpecification(bookcriteria)
                 .and(baseQueryService.createSpecification(baseCriteria));
         return bookRepository.count(specification);
     }
 
-    public Specification<Book> setAvailable(boolean available){
+    public Specification<Book> setInStock(boolean inStock) {
+        return (root, query, builder) -> builder.equal(root.get(Book_.IN_STOCK), inStock);
+    }
+
+    public Specification<Book> setIgnoreIds(List<Long> ids) {
+        return (root, query, builder) -> builder.not(root.get(Book_.id).in(ids));
+    }
+
+    public Specification<Book> setAvailable(boolean available) {
         return (root, query, builder) -> builder.equal(root.get(Book_.AVAILABLE), available);
     }
 

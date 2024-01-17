@@ -36,6 +36,7 @@ public class JwtUtil {
     }
 
     public String extractUsername(String token) {
+        log.debug("email " + extractClaim(token, Claims::getSubject));
         return extractClaim(token, Claims::getSubject);
     }
 

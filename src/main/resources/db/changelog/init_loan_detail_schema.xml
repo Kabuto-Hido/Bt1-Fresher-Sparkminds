@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="createTableLoanDetail" author="liquibase">
+        <createTable tableName="loan_detail">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="quantity" type="int" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_price" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="loan_id" type="bigint">
+                <constraints foreignKeyName="fk_loan_loan_detail"
+                             referencedColumnNames="id" referencedTableName="loan"/>
+            </column>
+            <column name="book_id" type="bigint">
+                <constraints foreignKeyName="fk_book_loan_detail"
+                             referencedColumnNames="id" referencedTableName="book"/>
+            </column>
+
+            <column name="created_date" type="datetime"/>
+            <column name="modified_date" type="datetime"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="modified_by" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="modifyColumn-loan-detail" author="liquibase">
+        <dropColumn tableName="loan_detail" columnName="total_price"/>
+        <modifyDataType tableName="loan_detail" columnName="unit_price" newDataType="decimal(10,2)"/>
+    </changeSet>
+
+    <changeSet id="addReturnColumn-loan-detail" author="liquibase">
+        <addColumn tableName="loan_detail">
+            <column name="actual_return_date" type="datetime"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

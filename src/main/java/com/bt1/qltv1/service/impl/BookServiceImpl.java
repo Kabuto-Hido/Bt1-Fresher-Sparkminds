@@ -122,9 +122,7 @@ public class BookServiceImpl implements BookService {
 
         book.setAuthorId(author);
         book.setGenreId(genre);
-
         book = bookRepository.save(book);
-
         return BookMapper.tobBookResponse(book);
     }
 

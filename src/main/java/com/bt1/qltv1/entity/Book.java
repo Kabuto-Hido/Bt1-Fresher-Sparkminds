@@ -49,7 +49,6 @@ public class Book extends BaseEntity{
 
     @CsvBindByName(column = "Quantity", required = true)
     @Column(name = "quantity", nullable = false)
-    @Min(value = 1, message = "{book.quantity.minimum}")
     @Builder.Default
     private Integer quantity = 1;
 
@@ -57,6 +56,11 @@ public class Book extends BaseEntity{
     @Column(name = "available")
     @Builder.Default
     private boolean available = true;
+
+    @CsvIgnore
+    @Column(name = "in_stock")
+    @Builder.Default
+    private boolean inStock = true;
 
     @CsvBindByName(column = "Price", required = true)
     @NotNull(message = "{book.price.null}")

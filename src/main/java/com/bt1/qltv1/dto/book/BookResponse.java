@@ -23,6 +23,7 @@ public class BookResponse extends BaseEntity {
     private String description;
     private Integer quantity;
     private boolean available;
+    private boolean inStock;
     private BigDecimal price;
     private BigDecimal loanFee;
     private AuthorRequest author;
