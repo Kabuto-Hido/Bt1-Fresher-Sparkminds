@@ -12,7 +12,7 @@
             <column name="quantity" type="int" defaultValueNumeric="1">
                 <constraints nullable="false"/>
             </column>
-            <column name="total_price" type="decimal(10,2)">
+            <column name="unit_price" type="decimal(10,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="loan_id" type="bigint">
@@ -29,11 +29,6 @@
             <column name="created_by" type="varchar(255)"/>
             <column name="modified_by" type="varchar(255)"/>
         </createTable>
-    </changeSet>
-
-    <changeSet id="modifyColumn-loan-detail" author="liquibase">
-        <dropColumn tableName="loan_detail" columnName="total_price"/>
-        <modifyDataType tableName="loan_detail" columnName="unit_price" newDataType="decimal(10,2)"/>
     </changeSet>
 
     <changeSet id="addReturnColumn-loan-detail" author="liquibase">

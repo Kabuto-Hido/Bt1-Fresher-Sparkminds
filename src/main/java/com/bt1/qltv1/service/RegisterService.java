@@ -46,7 +46,7 @@ public class RegisterService {
     public void register(RegisterRequest registerRequest) {
         Optional<User> userByEmail = userRepository.findByEmail(registerRequest.getEmail());
         if (userByEmail.isPresent()) {
-            throw new BadRequest("Email duplicate, Please retype!",
+            throw new BadRequest("",
                     "user.email.email-existed");
         }
 
@@ -71,7 +71,6 @@ public class RegisterService {
         Otp otpRegister = Otp.builder()
                 .code(code)
                 .otpExpired(verifyExpired).build();
-
 
         User newUser = User.builder().fullName(registerRequest.getFullname())
                 .status(UserStatus.ACTIVE)
@@ -176,6 +175,13 @@ public class RegisterService {
 
         sendEmailToActivatedAccount(sendMailRequest.getEmail(), token, code);
 
+    }
+
+    public boolean sayHello(String message){
+        if(message.contains("hello")){
+            return true;
+        }
+        return false;
     }
 
 }

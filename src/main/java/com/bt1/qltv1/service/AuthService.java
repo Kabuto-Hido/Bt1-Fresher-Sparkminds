@@ -13,6 +13,7 @@ import com.bt1.qltv1.exception.TokenException;
 import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import com.bt1.qltv1.util.Global;
 import com.bt1.qltv1.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -37,7 +38,7 @@ public class AuthService {
     private final UserDetailsServiceImpl userDetailsService;
     private final AccountService accountService;
 
-    public LoginResponse login(LoginRequest loginRequest){
+    public LoginResponse login(LoginRequest loginRequest) {
         //log login request
         try {
             authenticationManager.authenticate(
@@ -55,9 +56,9 @@ public class AuthService {
         Account account = accountService.findFirstByEmail(loginRequest.getEmail());
 
         //check is account enable MFA
-        if(account.isMfaEnabled() && (!mfaService.verifyOtp(account.getSecret(),
-                loginRequest.getCode()))){
-            throw new MfaException("Invalid MFA code","mfa.code.invalid");
+        if (account.isMfaEnabled() && (!mfaService.verifyOtp(account.getSecret(),
+                loginRequest.getCode()))) {
+            throw new MfaException("Invalid MFA code", "mfa.code.invalid");
         }
 
         //generate token
@@ -86,7 +87,7 @@ public class AuthService {
         return loginResponse;
     }
 
-    public void logout(HttpServletRequest request){
+    public void logout(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -98,33 +99,33 @@ public class AuthService {
 
     //INHERITANCE FOR ADMIN
 
-    public RefreshTokenResponse refreshToken(RefreshTokenRequest request){
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
-        String jti = jwtUtil.extractJTi(refreshToken);
-        LocalDateTime expiredTime = jwtUtil.extractExpiration(refreshToken);
+        String email;
+        String jti = null;
+        LocalDateTime expiredTime;
+        try {
+            jti = jwtUtil.extractJTi(refreshToken);
+            expiredTime = jwtUtil.extractExpiration(refreshToken);
+            email = jwtUtil.extractUsername(refreshToken);
 
-        if (Boolean.TRUE.equals(jwtUtil.isTokenExpired(refreshToken))) {
-            sessionService.blockSession(jti);
+        } catch (ExpiredJwtException e) {
+            if (jti != null) {
+                sessionService.blockSession(jti);
+            }
             throw new TokenException("Your token is expired. Please login again.",
                     "refresh-token.expired");
         }
 
-        String email;
-        try {
-            email = jwtUtil.extractUsername(refreshToken);
-        } catch (JwtException ex) {
-            throw new TokenException(ex.getMessage(),"token.invalid");
-        }
-
-        if(!sessionService.checkIsRightRefreshToken(jti, expiredTime)){
-            throw new TokenException("Please use right refresh token","refresh-token.invalid");
+        if (!sessionService.checkIsRightRefreshToken(jti, expiredTime)) {
+            throw new TokenException("Please use right refresh token", "refresh-token.invalid");
         }
         if (sessionService.checkIsBlockSession(jti)) {
-            throw new TokenException("Your refresh token can not use any more.","refresh-token.invalid");
+            throw new TokenException("Your refresh token can not use any more.", "refresh-token.invalid");
         }
         //generate new access token
         String accessToken = jwtUtil.generateToken(email, jti);
-        log.info("access token: "+accessToken);
+        log.info("access token: " + accessToken);
 
         RefreshTokenResponse response = RefreshTokenResponse.builder()
                 .accessToken(accessToken)

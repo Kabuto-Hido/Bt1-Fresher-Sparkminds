@@ -49,8 +49,4 @@ public class User extends Account{
         return getId() != null && getId().equals(((User) o).getId());
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

@@ -3,7 +3,6 @@ package com.bt1.qltv1.controller.user;
 import com.bt1.qltv1.criteria.BookCriteria;
 import com.bt1.qltv1.dto.ListOutputResult;
 import com.bt1.qltv1.dto.SuccessResponseDTO;
-import com.bt1.qltv1.dto.book.BookResponse;
 import com.bt1.qltv1.dto.borrow.BorrowRequest;
 import com.bt1.qltv1.dto.borrow.BorrowResponse;
 import com.bt1.qltv1.service.BorrowService;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

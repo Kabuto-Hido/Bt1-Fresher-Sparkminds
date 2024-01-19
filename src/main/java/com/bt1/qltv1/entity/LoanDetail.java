@@ -44,4 +44,16 @@ public class LoanDetail extends BaseEntity{
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LoanDetail)) return false;
+        return id != null && id.equals(((LoanDetail) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

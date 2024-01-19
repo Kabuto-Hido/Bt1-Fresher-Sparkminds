@@ -3,7 +3,6 @@ package com.bt1.qltv1.config;
 import com.bt1.qltv1.filter.JwtFilter;
 import com.bt1.qltv1.service.impl.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -59,7 +58,7 @@ public class SecurityConfig {
                         "/api/v1/common/send-email/activate","/api/v1/common/verify-otp",
                         "/api/v1/common/reset-password",
                         "/swagger-ui.html",
-                        "/v2/api-docs",
+                        "/v3/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",
                         "/configuration/ui",
@@ -88,7 +87,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(List.of("http://localhost:8082","http://localhost:8088"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers",
                 "Access-Control-Allow-Origin","Access-Control-Request-Method",

@@ -47,4 +47,16 @@ public class Session {
     public boolean isBlock(){
         return this.status.equals(SessionStatus.BLOCK);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Session)) return false;
+        return id != null && id.equals(((Session) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
